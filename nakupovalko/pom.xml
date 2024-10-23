@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>si.fri.rso.skupina06</groupId>
+    <artifactId>nakupovalko</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+
+    <properties>
+        
+        <maven.compiler.source>17</maven.compiler.source> 
+        <maven.compiler.target>17</maven.compiler.target>
+        <mysql.version>8.0.33</mysql.version>
+    </properties>
+
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>api</module>
+        <module>storitve</module>
+        <module>entitete</module>
+    </modules>
+
+
+    <dependencyManagement>
+        <dependencies>
+
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>si.fri.rso.skupina06</groupId>
+                <artifactId>entitete</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>si.fri.rso.skupina06</groupId>
+                <artifactId>storitve</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>si.fri.rso.skupina06</groupId>
+                <artifactId>api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+
+</project>
