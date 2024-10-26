@@ -23,7 +23,6 @@
         <module>entitete</module>
     </modules>
 
-
     <dependencyManagement>
         <dependencies>
 
