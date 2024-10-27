@@ -8,3 +8,13 @@ spring:
         jwt:
           issuer-uri: http://localhost:8080/realms/nakupovalko
           jwk-set-uri: http://localhost:8080/realms/nakupovalko/protocol/openid-connect/certs
+        client:
+          registration:
+            keycloak:
+              client-id: nakupovalko-prijava-client
+              client-secret: IxNZ2hu64wm6remozqLHPH2AKByaFU9K
+              authorization-grant-type: authorization_code
+              scope: openid, profile, email
+          provider:
+            keycloak:
+              issuer-uri: http://localhost:8080/realms/nakupovalko
