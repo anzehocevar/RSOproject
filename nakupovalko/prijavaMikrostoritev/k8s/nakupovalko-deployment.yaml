@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: primerjalnikcen-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: primerjalnikcen
+  template:
+    metadata:
+      labels:
+        app: primerjalnikcen
+    spec:
+      containers:
+        - image: foovo/primerjalnikcen
+          name: primerjalnikcen
+          env:
+            - name: KUMULUZEE_DATASOURCES0_CONNECTIONURL
+              value: jdbc:postgresql://mel.db.elephantsql.com:5432/xvbtsixp
+            - name: KUMULUZEE_DATASOURCES0_USERNAME
+              value: xvbtsixp
+            - name: KUMULUZEE_DATASOURCES0_PASSWORD
+              value: 6iDot7WC6H-TBaZ6Z4Gae8u6xC4GZPYH
+          ports:
+            - containerPort: 8080
+              name: server
+              protocol: TCP
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: primerjalnikcen
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: server
+  selector:
+    app: primerjalnikcen
