@@ -5,6 +5,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,16 +36,19 @@ public class UserController {
      * Requires USER role to access
      */
     @GetMapping("/protected")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<String> protectedEndpoint() {
+    @PreAuthorize("hasRole('anotherRole')")
+    /*public ResponseEntity<String> protectedEndpoint() {
         return ResponseEntity.ok("This is a protected endpoint");
+    }*/
+    public String protectedEndpoint() {
+        return "protected";
     }
 
     /**
      * Requires ADMIN role to access
      */
-    @GetMapping("/admin")
-    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin2")
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<String> adminEndpoint() {
         return ResponseEntity.ok("This is an admin endpoint");
     }

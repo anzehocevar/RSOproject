@@ -1,0 +1,1 @@
+const jwtToken = sessionStorage.getItem('jwt');
