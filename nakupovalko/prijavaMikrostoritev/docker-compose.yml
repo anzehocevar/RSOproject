@@ -1,0 +1,19 @@
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: password
+    volumes:
+      - ./keycloak:/opt/keycloak/data/h2
+    ports:
+      - "8080:8080"
+    command: start-dev
+
+  app:
+    build:
+      context: .
+    ports:
+      - "8081:8081"
+    depends_on:
+      - keycloak
