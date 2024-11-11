@@ -1,6 +1,7 @@
 package si.fri.rso.skupina06.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +24,9 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtGra
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}")
+    private String jwkSetUri;
+
     private final JwtAuthConverter jwtAuthConverter;
 
     /**
@@ -44,5 +48,11 @@ public class SecurityConfig {
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter)));
 
         return http.build();
+    }
+
+    // verify JWT signature
+    @Bean
+    public JwtDecoder jwtDecoder() {
+        return NimbusJwtDecoder.withJwkSetUri(this.jwkSetUri).build();
     }
 }
