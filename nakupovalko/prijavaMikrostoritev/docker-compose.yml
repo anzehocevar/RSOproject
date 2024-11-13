@@ -10,7 +10,7 @@ services:
       - "8080:8080"
     command: start-dev
 
-  app:
+  nakupovalko-prijava:
     build:
       context: .
     ports:

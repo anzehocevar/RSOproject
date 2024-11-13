@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/nakupovalko-login", "/login.js").permitAll()
+                        .requestMatchers("/nakupovalko-login", "/login.js", "/actuator", "/actuator/*").permitAll()
                         .requestMatchers("/api/*", "/home").authenticated()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2
