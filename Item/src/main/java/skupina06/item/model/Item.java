@@ -1,9 +1,7 @@
 package skupina06.item.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
 public class Item {
@@ -11,8 +9,18 @@ public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String name;
 
+    private String name;
+    private String description;
+    private double price;
+    private int quantity;
+
+    @ElementCollection
+    private List<String> assignedUsers;
+
+    private boolean purchased;
+
+    // Getters and setters
     public int getId() {
         return id;
     }
@@ -27,5 +35,45 @@ public class Item {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public List<String> getAssignedUsers() {
+        return assignedUsers;
+    }
+
+    public void setAssignedUsers(List<String> assignedUsers) {
+        this.assignedUsers = assignedUsers;
+    }
+
+    public boolean isPurchased() {
+        return purchased;
+    }
+
+    public void setPurchased(boolean purchased) {
+        this.purchased = purchased;
     }
 }
