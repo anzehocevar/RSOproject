@@ -13,12 +13,11 @@ public class Item {
     private String name;
     private String description;
     private double price;
-    private int quantity;
 
-    @ElementCollection
-    private List<String> assignedUsers;
+//    @ElementCollection
+//    private List<String> assignedUsers;
 
-    private boolean purchased;
+//    private boolean purchased;
 
     // Getters and setters
     public int getId() {
@@ -53,27 +52,19 @@ public class Item {
         this.price = price;
     }
 
-    public int getQuantity() {
-        return quantity;
-    }
+//    public List<String> getAssignedUsers() {
+//        return assignedUsers;
+//    }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
+//    public void setAssignedUsers(List<String> assignedUsers) {
+//        this.assignedUsers = assignedUsers;
+//    }
 
-    public List<String> getAssignedUsers() {
-        return assignedUsers;
-    }
+//    public boolean isPurchased() {
+//        return purchased;
+//    }
 
-    public void setAssignedUsers(List<String> assignedUsers) {
-        this.assignedUsers = assignedUsers;
-    }
-
-    public boolean isPurchased() {
-        return purchased;
-    }
-
-    public void setPurchased(boolean purchased) {
-        this.purchased = purchased;
-    }
+//    public void setPurchased(boolean purchased) {
+//        this.purchased = purchased;
+//    }
 }

@@ -36,9 +36,8 @@ public class ItemService {
             item.setName(updatedItem.getName());
             item.setDescription(updatedItem.getDescription());
             item.setPrice(updatedItem.getPrice());
-            item.setQuantity(updatedItem.getQuantity());
-            item.setAssignedUsers(updatedItem.getAssignedUsers());
-            item.setPurchased(updatedItem.isPurchased());
+//            item.setAssignedUsers(updatedItem.getAssignedUsers());
+//            item.setPurchased(updatedItem.isPurchased());
             return itemRepository.save(item);
         }).orElseThrow(() -> new RuntimeException("Item not found with ID: " + id));
     }
