@@ -4,3 +4,5 @@
 /home/veronika/faks/rso/RSOproject/nakupovalko/userMikrostoritev/src/main/java/si/fri/skupina06/user/entity/User.java
 /home/veronika/faks/rso/RSOproject/nakupovalko/userMikrostoritev/src/main/java/si/fri/skupina06/user/repository/UserRepo.java
 /home/veronika/faks/rso/RSOproject/nakupovalko/userMikrostoritev/src/main/java/si/fri/skupina06/user/service/UserService.java
+/home/veronika/faks/rso/RSOproject/nakupovalko/userMikrostoritev/src/main/java/si/fri/skupina06/user/service/health/ProfileHealthChecker.java
+/home/veronika/faks/rso/RSOproject/nakupovalko/userMikrostoritev/src/main/java/si/fri/skupina06/user/service/health/UserHealthChecker.java

@@ -67,6 +67,13 @@
             <version>2.15.2</version>
         </dependency>
 
+        <!-->Health checking <-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <version>3.4.1</version>
+        </dependency>
+
 
     </dependencies>
 

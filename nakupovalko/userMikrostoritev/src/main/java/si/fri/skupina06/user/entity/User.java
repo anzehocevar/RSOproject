@@ -13,7 +13,11 @@ public class User {
     private int id;
 
     private String name;
+
+    @Column(unique = true, nullable = false)
     private String surname;
+
+    @Column(unique = true, nullable = false)
     private String email;
     private String username;
 
@@ -56,9 +60,6 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
-
-
-
 
 
 }

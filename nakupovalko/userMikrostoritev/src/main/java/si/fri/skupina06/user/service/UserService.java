@@ -32,7 +32,6 @@ public class UserService {
         }).orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
     }
 
-
     public User addUser(String user) throws JsonProcessingException {
         JsonNode jsonNode = objectMapper.readTree(user);
 
@@ -49,10 +48,19 @@ public class UserService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
-    
+
+    public User getUserByUsername(String username) {
+        User u = userRepository.findUserByUsername(username);
+        if(u == null) {
+            throw new RuntimeException("User not found with username: " + username);
+        }
+
+        return u;
+    }
+
     public User getUserById(int id) {
         return userRepository.findById(id)
-                        .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
+                        .orElseThrow(() -> new RuntimeException("User with ID not found: " + id));
     }
 
 

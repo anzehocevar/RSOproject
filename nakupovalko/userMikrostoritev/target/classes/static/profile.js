@@ -35,6 +35,7 @@ const app = Vue.createApp({
                 this.user = await response.json();
                 this.id = await idResponse.json();
 
+                //calling the /users/id/avatar is a lot slower so we opted for this
                 this.avatarUrl = `https://api.dicebear.com/9.x/pixel-art/svg?seed=${this.user.username}`;
 
                 this.editFields = Object.keys(this.user).reduce((acc, key) => {
