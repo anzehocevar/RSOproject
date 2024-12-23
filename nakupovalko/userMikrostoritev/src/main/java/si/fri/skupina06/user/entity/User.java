@@ -1,7 +1,8 @@
 package si.fri.skupina06.user.entity;
 
 import jakarta.persistence.*;
-import java.util.List;
+
+import java.util.UUID;
 
 @Entity
 @Table(name = "uporabniki")
