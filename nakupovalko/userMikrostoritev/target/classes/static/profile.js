@@ -34,7 +34,6 @@ const app = Vue.createApp({
 
                 this.user = await response.json();
                 this.id = await idResponse.json();
-                console.log(`got id ${this.id}`);
 
                 this.avatarUrl = `https://api.dicebear.com/9.x/pixel-art/svg?seed=${this.user.username}`;
 
@@ -47,6 +46,7 @@ const app = Vue.createApp({
                 this.error = 'Failed to load profile information.';
             }
         },
+
         saveEdit(key) {
             this.editFields[key] = false;
 

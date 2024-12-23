@@ -62,4 +62,12 @@ public class UserService {
         }
         userRepository.deleteById(id);
     }
+
+    public String getAvatarUrlById(int id) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user != null) {
+            return "https://api.dicebear.com/9.x/pixel-art/svg?seed=".concat(user.getUsername());
+        }
+        return null;
+    }
 }

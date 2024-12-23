@@ -2,16 +2,22 @@ package si.fri.skupina06.user.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import si.fri.skupina06.user.entity.User;
 import si.fri.skupina06.user.service.UserService;
 
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
@@ -189,6 +195,51 @@ public class UserController {
         user.put("username", loggedInUser.getUsername());
 
         return user;
+    }
+
+
+    @Operation(
+            summary = "Pridobi avatar uporabnika glede na ID",
+            description = "Pridobi sliko uporabnika, glede na njegov ID. Slika je generirana naključno na podlagi uporabniškega imena.",
+            responses = {
+                    @ApiResponse(
+                            description = "Avatar found",
+                            responseCode = "200",
+                            content = @Content(
+                                    schema = @Schema(implementation = User.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "User not found",
+                            responseCode = "404"
+                    )
+            }
+    )
+    @GetMapping("/{id}/avatar")
+    public ResponseEntity<byte[]> getUserAvatar(@PathVariable int id) {
+        String avatarUrl = userService.getAvatarUrlById(id);
+
+        if (avatarUrl != null) {
+            try {
+                URL url = new URL(avatarUrl);
+                URLConnection connection = url.openConnection();
+
+                InputStream inputStream = connection.getInputStream();
+                byte[] imageBytes = IOUtils.toByteArray(inputStream);
+
+                String contentType = connection.getContentType();
+                MediaType mediaType = MediaType.parseMediaType(contentType);
+                return ResponseEntity.ok()
+                        .contentType(mediaType)
+                        .body(imageBytes);
+
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error loading avatar".getBytes());
+            }
+
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Avatar not found".getBytes());
+        }
     }
 
 }
