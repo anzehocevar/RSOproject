@@ -3,3 +3,4 @@ si/fri/skupina06/user/service/UserService.class
 si/fri/skupina06/user/UserApplication.class
 si/fri/skupina06/user/repository/UserRepo.class
 si/fri/skupina06/user/controller/UserController.class
+si/fri/skupina06/user/controller/ProfileController.class

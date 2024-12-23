@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.*;
 import si.fri.skupina06.user.entity.User;
 import si.fri.skupina06.user.service.UserService;
 
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.List;
 
 @RestController
@@ -13,6 +15,8 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private ProfileController profileController;
 
     @PostMapping
     public User addUser(@RequestBody User user) {
@@ -42,4 +46,25 @@ public class UserController {
         userService.deleteUser(id);
         return "User with ID " + id + " has been deleted successfully.";
     }
+
+    @GetMapping("/active/id")
+    public int getLoggedInUserId() {
+        int id = profileController.getLoggedInUser();
+        return userService.getUserById(id).getId();
+    }
+
+    @GetMapping("/active")
+    public Dictionary<String, String> getLoggedInUser() {
+        int id = profileController.getLoggedInUser();
+        User loggedInUser = userService.getUserById(id);
+
+        Dictionary<String, String> user = new Hashtable<>();
+        user.put("name", loggedInUser.getName());
+        user.put("email", loggedInUser.getEmail());
+        user.put("surname", loggedInUser.getSurname());
+        user.put("username", loggedInUser.getUsername());
+
+        return user;
+    }
+
 }

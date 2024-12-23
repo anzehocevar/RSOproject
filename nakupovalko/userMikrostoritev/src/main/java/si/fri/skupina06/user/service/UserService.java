@@ -13,6 +13,17 @@ public class UserService {
     @Autowired //Autowired
     private UserRepo userRepository;
 
+    public User updateUser(int id, User updatedUser) {
+        return userRepository.findById(id).map(user -> {
+            user.setName(updatedUser.getName());
+            user.setSurname(updatedUser.getSurname());
+            user.setUsername(updatedUser.getUsername());
+            user.setEmail(updatedUser.getEmail());
+
+            return userRepository.save(user);
+        }).orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
+    }
+
 
     public User addUser(User user) {
         return userRepository.save(user);
@@ -25,17 +36,6 @@ public class UserService {
     public User getUserById(int id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
-    }
-
-    public User updateUser(int id, User updatedUser) {
-        return userRepository.findById(id).map(user -> {
-            user.setName(updatedUser.getName());
-            user.setSurname(updatedUser.getSurname());
-            user.setUsername(updatedUser.getUsername());
-            user.setEmail(updatedUser.getEmail());
-
-            return userRepository.save(user);
-        }).orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
     }
 
 

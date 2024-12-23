@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nakupovalko</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        img {
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+        }
+        .profile {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .error {
+            color: red;
+            text-align: center;
+        }
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin: 0 auto;
+            width: fit-content;
+        }
+        .user-info p {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        .user-info strong {
+            min-width: 100px;
+        }
+        .edit-buttons {
+            display: flex;
+            flex-direction: column;
+            margin-left: 10px;
+        }
+        .edit-buttons button {
+            margin: 5px 0;
+        }
+        input {
+            margin-left: 10px;
+        }
+
+        .top-right-buttons {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        .top-right-buttons button {
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <div class="top-right-buttons">
+        <button @click="goHome">Home</button>
+        <button @click="logout">Logout</button>
+    </div>
+
+    <h1 class="profile">Profil</h1>
+
+    <!-- display avatar -->
+    <div class="profile">
+        <img v-if="avatarUrl" :src="avatarUrl" alt="Avatar" />
+    </div>
+
+    <!-- display user information and add edit fields -->
+    <div class="profile" v-if="user">
+        <div class="user-info">
+            <div v-for="(value, key) in user" :key="key">
+                <p v-if="!editFields[key]">
+                    <strong>{{ key.charAt(0).toUpperCase() + key.slice(1) }}:</strong> {{ value }}
+                    <span class="edit-buttons">
+                        <button @click="editFields[key] = true">Edit</button>
+                    </span>
+                </p>
+                <p v-else>
+                    <strong>{{ key.charAt(0).toUpperCase() + key.slice(1) }}:</strong>
+                    <input v-model="user[key]" />
+                    <span class="edit-buttons">
+                        <button @click="saveEdit(key)">Save</button>
+                        <button @click="cancelEdit(key)">Cancel</button>
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error message -->
+    <p v-if="error" class="error">{{ error }}</p>
+</div>
+<script src="/profile.js"></script>
+</body>
+</html>

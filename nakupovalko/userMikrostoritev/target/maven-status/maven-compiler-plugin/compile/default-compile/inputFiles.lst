@@ -1,4 +1,5 @@
 /home/veronika/faks/rso/RSOproject/nakupovalko/userMikrostoritev/src/main/java/si/fri/skupina06/user/UserApplication.java
+/home/veronika/faks/rso/RSOproject/nakupovalko/userMikrostoritev/src/main/java/si/fri/skupina06/user/controller/ProfileController.java
 /home/veronika/faks/rso/RSOproject/nakupovalko/userMikrostoritev/src/main/java/si/fri/skupina06/user/controller/UserController.java
 /home/veronika/faks/rso/RSOproject/nakupovalko/userMikrostoritev/src/main/java/si/fri/skupina06/user/entity/User.java
 /home/veronika/faks/rso/RSOproject/nakupovalko/userMikrostoritev/src/main/java/si/fri/skupina06/user/repository/UserRepo.java
