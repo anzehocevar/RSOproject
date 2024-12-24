@@ -10,7 +10,7 @@
     </parent>
     <groupId>skupina06</groupId>
     <artifactId>user</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>user</name>
 
     <properties>
@@ -67,11 +67,18 @@
             <version>2.15.2</version>
         </dependency>
 
-        <!-->Health checking <-->
+        <!-- Health checking -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
             <version>3.4.1</version>
+        </dependency>
+
+        <!-- Centralized loggging -->
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>7.4</version>
         </dependency>
 
 
