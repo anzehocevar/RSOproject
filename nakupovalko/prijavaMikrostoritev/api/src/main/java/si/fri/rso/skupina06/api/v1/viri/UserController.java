@@ -1,5 +1,7 @@
 package si.fri.rso.skupina06.api.v1.viri;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,11 +20,15 @@ import java.util.Map;
 @RequestMapping("/api")
 public class UserController {
 
+    private static final Logger logger = LogManager.getLogger(UserController.class);
+
     /**
      * Get user information from JWT
      */
     @GetMapping("/user-info")
     public ResponseEntity<Map<String, Object>> getUserInfo(@AuthenticationPrincipal Jwt jwt) {
+        logger.info("Getting logged in user info");
+
         Map<String, Object> userInfo = new HashMap<>();
         userInfo.put("sub", jwt.getSubject());
         userInfo.put("name", jwt.getClaim("name"));

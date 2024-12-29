@@ -48,6 +48,14 @@
                 <version>${project.version}</version>
             </dependency>
 
+            <!-- elk -->
+            <dependency>
+                <groupId>net.logstash.logback</groupId>
+                <artifactId>logstash-logback-encoder</artifactId>
+                <version>7.4</version>
+            </dependency>
+
+
         </dependencies>
     </dependencyManagement>
 

@@ -1,5 +1,3 @@
-version: '3.8'  # Keep this as 3.8 or change to 3.9 for native health checks
-
 services:
   postgres:
     image: postgres:16.2

@@ -2,9 +2,13 @@ server:
   port: 8081
 
 management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
   endpoint:
     health:
-      show-details=always
+      show-details: always
 
 spring:
   security:
@@ -26,3 +30,16 @@ spring:
 
               #Redirect to keycloak login, after login user is redirected using redirectURI
               #http://localhost:8080/realms/nakupovalko/protocol/openid-connect/auth?scope=openid&response_type=code&client_id=nakupovalko-prijava-client&redirect_uri=https://www.google.com
+
+
+#elk
+logging:
+  level:
+    org.springframework: INFO
+    si.fri.skupina06: DEBUG
+  file:
+    path: .
+    name: login-service.log
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
