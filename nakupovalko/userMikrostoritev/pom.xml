@@ -94,7 +94,12 @@
             <version>3.4.1</version>
         </dependency>
 
-
+        <!-- Metrike -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <version>1.14.2</version>
+        </dependency>
 
     </dependencies>
 
