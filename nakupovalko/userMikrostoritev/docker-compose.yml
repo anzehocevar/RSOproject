@@ -28,6 +28,9 @@ services:
       - logstash
     networks:
       - elk
+    volumes:
+      - ./src/main:/app/src/main
+      - ./target:/app/target
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.6.2
@@ -76,3 +79,4 @@ networks:
 
 volumes:
   mysql_data:
+

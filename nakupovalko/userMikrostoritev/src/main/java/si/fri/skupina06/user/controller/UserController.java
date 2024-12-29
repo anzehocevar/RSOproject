@@ -2,10 +2,14 @@ package si.fri.skupina06.user.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.RetryRegistry;
+import io.github.resilience4j.retry.annotation.Retry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.annotation.PostConstruct;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,8 +32,25 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
 
+    private static final Logger logger = LogManager.getLogger(UserController.class);
+
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RetryRegistry registry;
+
+    @PostConstruct
+    public void postConstruct() {
+        registry.retry("userServiceTestRetry").getEventPublisher().onRetry(ev -> logger.error("messsage: {}", ev));
+    }
+
+    @Retry(name = "userServiceTestRetry", fallbackMethod = "fallbackGetAllUsers")
+    @GetMapping("/test")
+    public List<User> getAllUsersTest() {
+        return userService.getAllUsersTest();
+    }
+
     @Autowired
     private ProfileController profileController;
 
@@ -50,6 +71,7 @@ public class UserController {
                     )
             }
     )
+    @CircuitBreaker(name = "userCB", fallbackMethod = "fallbackAddUser")
     @PostMapping
     public User addUser(@RequestBody JsonNode user) throws JsonProcessingException {
         return userService.addUser(user.toString());
@@ -69,6 +91,7 @@ public class UserController {
             }
     )
     @GetMapping
+    @Retry(name = "userCB", fallbackMethod = "fallbackGetAllUsers")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
@@ -90,6 +113,7 @@ public class UserController {
                     )
             }
     )
+    @CircuitBreaker(name = "userCB", fallbackMethod = "fallbackGetUserById")
     @GetMapping("/{id}")
     public User getUserById(@PathVariable int id) {
         return userService.getUserById(id);
@@ -118,6 +142,7 @@ public class UserController {
             }
     )
     @PutMapping("/{id}")
+    @CircuitBreaker(name = "userCB", fallbackMethod = "fallbackUpdateUser")
     public User updateUser(@PathVariable int id, @RequestBody JsonNode updatedUser) throws JsonProcessingException {
         return userService.updateUser(id, updatedUser.toString());
     }
@@ -139,6 +164,7 @@ public class UserController {
                     )
             }
     )
+    @CircuitBreaker(name = "userCB", fallbackMethod = "fallbackDeleteUser")
     @DeleteMapping("/{id}")
     public String deleteUser(@PathVariable int id) {
         userService.deleteUser(id);
@@ -217,6 +243,7 @@ public class UserController {
                     )
             }
     )
+    @CircuitBreaker(name = "userCB", fallbackMethod = "fallbackGetAvatarUrlById")
     @GetMapping("/{id}/avatar")
     public ResponseEntity<byte[]> getUserAvatar(@PathVariable int id) {
         String avatarUrl = userService.getAvatarUrlById(id);
@@ -244,4 +271,37 @@ public class UserController {
         }
     }
 
+
+    //FALLBACK METHODS for retry and circuit breakers
+
+    public List<User> fallbackGetAllUsers(Throwable t) {
+        logger.error("Circuit breaker activated for getAllUsers: {}", t.getMessage());
+        userService.retryCount = 0; // Reset counter
+        return List.of();
+    }
+
+    public User fallbackUpdateUser(int id, String updatedUser, Throwable t) {
+        logger.error("Circuit breaker activated for updateUser: {}", t.getMessage());
+        return new User();
+    }
+
+    public User fallbackAddUser(String user, Throwable t) {
+        logger.error("Circuit breaker activated for addUser: {}", t.getMessage());
+        return new User();
+    }
+
+
+    public User fallbackGetUserById(int id, Throwable t) {
+        logger.error("Circuit breaker activated for getUserById: {}", t.getMessage());
+        return new User();
+    }
+
+    public void fallbackDeleteUser(int id, Throwable t) {
+        logger.error("Circuit breaker activated for deleteUser: {}", t.getMessage());
+    }
+
+    public String fallbackGetAvatarUrlById(int id, Throwable t) {
+        logger.error("Circuit breaker activated for getAvatarUrlById: {}", t.getMessage());
+        return null;
+    }
 }

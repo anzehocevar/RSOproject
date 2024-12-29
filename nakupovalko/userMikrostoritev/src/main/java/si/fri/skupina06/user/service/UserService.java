@@ -13,18 +13,21 @@ import si.fri.skupina06.user.repository.UserRepo;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class UserService {
 
+    private final Random random = new Random();
     private static final Logger logger = LogManager.getLogger(UserService.class);
 
     @Autowired //Autowired
     private UserRepo userRepository;
 
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @CircuitBreaker(name = "userService", fallbackMethod = "fallbackUpdateUser")
+
     public User updateUser(int id, String updatedUser) throws JsonProcessingException {
         JsonNode jsonNode = objectMapper.readTree(updatedUser);
 
@@ -42,7 +45,7 @@ public class UserService {
         });
     }
 
-    @CircuitBreaker(name = "userService", fallbackMethod = "fallbackAddUser")
+
     public User addUser(String user) throws JsonProcessingException {
         JsonNode jsonNode = objectMapper.readTree(user);
 
@@ -56,13 +59,33 @@ public class UserService {
         return userRepository.save(newUser);
     }
 
-    @Retry(name = "userServiceRetry", fallbackMethod = "fallbackGetAllUsers")
     public List<User> getAllUsers() {
         logger.info("Getting all users");
         return userRepository.findAll();
     }
 
-    @CircuitBreaker(name = "userService", fallbackMethod = "fallbackGetUserByUsername")
+
+    public int retryCount = 0;
+
+    //test @retry
+    public List<User> getAllUsersTest() {
+        retryCount++;
+        logger.info("Attempt #{}: Executing getAllUsersTest()", retryCount);
+
+        int randomBool = random.nextInt(2);
+
+        if(randomBool == 0) {
+            logger.info("Attempt #{}: Executing getAllUsersTest()", retryCount);
+            throw new RuntimeException("Testing retry");
+        }
+        logger.info("Success on attempt #{}: Getting all users", retryCount);
+        retryCount = 0;
+
+        logger.info("Getting all users");
+        return userRepository.findAll();
+    }
+
+
     public User getUserByUsername(String username) {
         User u = userRepository.findUserByUsername(username);
         if(u == null) {
@@ -73,7 +96,7 @@ public class UserService {
         return u;
     }
 
-    @CircuitBreaker(name = "userService", fallbackMethod = "fallbackGetUserById")
+
     public User getUserById(int id) {
         return userRepository.findById(id)
                         .orElseThrow(() -> {
@@ -82,7 +105,7 @@ public class UserService {
                         });
     }
 
-    @CircuitBreaker(name = "userService", fallbackMethod = "fallbackDeleteUser")
+
     public void deleteUser(int id) {
         if (!userRepository.existsById(id)) {
             logger.error("Failed to delete user with id {}", id);
@@ -92,7 +115,7 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    @CircuitBreaker(name = "userService", fallbackMethod = "fallbackGetAvatarUrlById")
+
     public String getAvatarUrlById(int id) {
         User user = userRepository.findById(id).orElse(null);
         if (user != null) {
@@ -100,41 +123,6 @@ public class UserService {
             logger.info("Found avatar at url {}", url);
             return url;
         }
-        return null;
-    }
-
-    //FALLBACK METHODS
-    public User fallbackUpdateUser(int id, String updatedUser, Throwable t) {
-        logger.error("Circuit breaker activated for updateUser: {}", t.getMessage());
-        return new User();
-    }
-
-    public User fallbackAddUser(String user, Throwable t) {
-        logger.error("Circuit breaker activated for addUser: {}", t.getMessage());
-        return new User();
-    }
-
-    public List<User> fallbackGetAllUsers(Throwable t) {
-        logger.error("Circuit breaker activated for getAllUsers: {}", t.getMessage());
-        return List.of();
-    }
-
-    public User fallbackGetUserByUsername(String username, Throwable t) {
-        logger.error("Circuit breaker activated for getUserByUsername: {}", t.getMessage());
-        return new User();
-    }
-
-    public User fallbackGetUserById(int id, Throwable t) {
-        logger.error("Circuit breaker activated for getUserById: {}", t.getMessage());
-        return new User();
-    }
-
-    public void fallbackDeleteUser(int id, Throwable t) {
-        logger.error("Circuit breaker activated for deleteUser: {}", t.getMessage());
-    }
-
-    public String fallbackGetAvatarUrlById(int id, Throwable t) {
-        logger.error("Circuit breaker activated for getAvatarUrlById: {}", t.getMessage());
         return null;
     }
 }
