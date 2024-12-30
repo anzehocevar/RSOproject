@@ -23,7 +23,7 @@ services:
       SPRING_DATASOURCE_USERNAME: veronika
       SPRING_DATASOURCE_PASSWORD: 123
     ports:
-      - "8081:8081"
+      - "8082:8082"
     depends_on:
       - mysql
     networks:

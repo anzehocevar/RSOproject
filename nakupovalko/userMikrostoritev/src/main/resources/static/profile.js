@@ -21,13 +21,13 @@ const app = Vue.createApp({
 
         async fetchUserInfo() {
             try {
-                const response = await fetch('http://localhost:8081/users/active');
+                const response = await fetch('http://localhost:8082/users/active');
 
                 if (!response.ok) {
                     throw new Error('Failed to fetch user data');
                 }
 
-                const idResponse = await fetch('http://localhost:8081/users/active/id');
+                const idResponse = await fetch('http://localhost:8082/users/active/id');
                 if (!response.ok) {
                     throw new Error('Failed to fetch user data');
                 }
@@ -51,7 +51,7 @@ const app = Vue.createApp({
         saveEdit(key) {
             this.editFields[key] = false;
 
-            const response = fetch(`http://localhost:8081/users/${this.id}`, {
+            const response = fetch(`http://localhost:8082/users/${this.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
