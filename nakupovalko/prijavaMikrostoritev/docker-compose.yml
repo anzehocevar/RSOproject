@@ -9,6 +9,8 @@ services:
     ports:
       - "8080:8080"
     command: start-dev
+    networks:
+      - nakupovalko-network
 
   nakupovalko-prijava:
     build:
@@ -17,6 +19,10 @@ services:
       - "8081:8081"
     depends_on:
       - keycloak
+    networks:
+      - nakupovalko-network
+    environment:
+      - KEYCLOAK_ISSUER_URI=http://keycloak:8080/realms/nakupovalko
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.6.2
@@ -86,4 +92,6 @@ networks:
   elk:
     driver: bridge
   monitoring:
+    driver: bridge
+  nakupovalko-network:
     driver: bridge

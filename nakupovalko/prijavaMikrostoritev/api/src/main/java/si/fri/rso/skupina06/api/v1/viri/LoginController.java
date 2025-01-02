@@ -18,6 +18,12 @@ public class LoginController {
     }
 
     @GetMapping("/home")
+    public String home() {
+        logger.info("Getting home endpoint.");
+        return "home";
+    }
+
+    @GetMapping("/admin")
     @PreAuthorize("hasRole('admin')")
     public String adminEndpoint() {
         logger.info("Getting admin endpoint.");
