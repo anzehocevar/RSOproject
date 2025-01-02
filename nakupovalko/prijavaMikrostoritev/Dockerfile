@@ -13,6 +13,8 @@ CMD ["java", "-jar", "api-1.0.0-SNAPSHOT.jar"]
 
 
 #Za DockerHub:
+# create docker repository nakupovalko-prijava
+
 #docker login
 # docker build -t vm0012/nakupovalko-prijava:1.0.0 .
 #  docker push vm0012/nakupovalko-prijava:1.0.0
