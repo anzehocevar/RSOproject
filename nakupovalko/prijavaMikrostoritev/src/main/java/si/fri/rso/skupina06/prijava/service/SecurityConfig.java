@@ -1,4 +1,4 @@
-package si.fri.rso.skupina06.config;
+package si.fri.rso.skupina06.prijava.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

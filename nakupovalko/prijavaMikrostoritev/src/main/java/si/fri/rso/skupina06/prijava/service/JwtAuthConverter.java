@@ -1,4 +1,4 @@
-package si.fri.rso.skupina06.config;
+package si.fri.rso.skupina06.prijava.service;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.NonNull;

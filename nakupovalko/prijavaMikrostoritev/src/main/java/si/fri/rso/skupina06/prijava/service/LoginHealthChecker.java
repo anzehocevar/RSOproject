@@ -1,4 +1,4 @@
-package si.fri.rso.skupina06.api.v1.viri;
+package si.fri.rso.skupina06.prijava.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.stereotype.Component;
+import si.fri.rso.skupina06.prijava.controller.LoginController;
 
 @Slf4j
 @Component

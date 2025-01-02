@@ -1,4 +1,4 @@
-package si.fri.rso.skupina06.api.v1.viri;
+package si.fri.rso.skupina06.prijava.controller;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

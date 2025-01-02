@@ -7,9 +7,9 @@ RUN mvn clean package
 FROM openjdk:21
 RUN mkdir /app
 WORKDIR /app
-COPY --from=build ./app/api/target/api-1.0.0-SNAPSHOT.jar /app
+COPY --from=build ./app/target/prijava-1.0.0-SNAPSHOT.jar /app
 EXPOSE 8081
-CMD ["java", "-jar", "api-1.0.0-SNAPSHOT.jar"]
+CMD ["java", "-jar", "prijava-1.0.0-SNAPSHOT.jar"]
 
 
 #Za DockerHub:

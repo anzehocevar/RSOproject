@@ -1,4 +1,4 @@
-package si.fri.rso.skupina06.api.v1.viri;
+package si.fri.rso.skupina06.prijava;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
