@@ -2,8 +2,6 @@ package si.fri.skupina06.user.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.github.resilience4j.retry.annotation.Retry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +83,15 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public int getIdByEmail(String email) {
+        User u = userRepository.findUserByEmail(email);
+        if(u == null) {
+            logger.error("User not found with email {}", email);
+            throw new RuntimeException("User not found with email: " + email);
+        }
+        logger.info("Found user with username {}", email);
+        return u.getId();
+    }
 
     public User getUserByUsername(String username) {
         User u = userRepository.findUserByUsername(username);
