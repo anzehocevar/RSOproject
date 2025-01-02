@@ -1,6 +1,8 @@
 package si.fri.rso.skupina06.prijava.controller;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,6 +28,16 @@ public class UserController {
         this.jwtDecoder = jwtDecoder;
     }
 
+    @Operation(
+            summary = "Pridobi prijavljenega uporabnika na podlagi JWT",
+            description = "Pridobi json objekt uporabnika na podlagi JWT",
+            responses = {
+                    @ApiResponse(
+                            description = "User found",
+                            responseCode = "200"
+                    )
+            }
+    )
     /**
      * Get user information from JWT
      */
@@ -56,6 +68,20 @@ public class UserController {
     }
 
 
+    @Operation(
+            summary = "Nastavi JWT prijavljenega uporabnika",
+            description = "Nastavi JWT prijavljenega uporabnika za pridobivanje informacij o prijavljenem uporabniku.",
+            responses = {
+                    @ApiResponse(
+                            description = "Token saved",
+                            responseCode = "200"
+                    ),
+                    @ApiResponse(
+                            description = "Token is null",
+                            responseCode = "404"
+                    )
+            }
+    )
     @PostMapping("/set-token")
     public ResponseEntity<Void> setUserToken(@RequestBody Map<String, String> body) {
         logger.info(body.toString());
@@ -68,6 +94,16 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(
+            summary = "Pridobi prijavljenega uporabnika",
+            description = "Pridobi informacije prijavljenega uporabnika glede na shranjen JWT prijavljenega uporabnika.",
+            responses = {
+                    @ApiResponse(
+                            description = "Got user info",
+                            responseCode = "200"
+                    )
+            }
+    )
     /**
      * Get logged in user data based on the JWT token of the currently logged in user.
      */
@@ -79,6 +115,10 @@ public class UserController {
     }
 
 
+    @Operation(
+            summary = "Končna točka za role anotherRole",
+            description = "Končna točka do katere dostopajo lahko le uporabniki z vlogo 'anotherRole'"
+    )
     /**
      * Requires USER role to access
      */
@@ -91,12 +131,4 @@ public class UserController {
         return "protected";
     }
 
-    /**
-     * Requires ADMIN role to access
-     */
-    @GetMapping("/admin2")
-    @PreAuthorize("hasRole('admin')")
-    public ResponseEntity<String> adminEndpoint() {
-        return ResponseEntity.ok("This is an admin endpoint");
-    }
 }
