@@ -17,7 +17,7 @@ import java.util.Map;
 public class ProfileController {
 
     private static final Logger logger = LogManager.getLogger(ProfileController.class);
-    
+
     @Autowired
     private UserService userService;
 
