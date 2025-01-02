@@ -31,6 +31,14 @@ spring:
               #Redirect to keycloak login, after login user is redirected using redirectURI
               #http://localhost:8080/realms/nakupovalko/protocol/openid-connect/auth?scope=openid&response_type=code&client_id=nakupovalko-prijava-client&redirect_uri=https://www.google.com
 
+resilience4j:
+  retry:
+    instances:
+      getUserInfo:
+        max-attempts: 3
+        wait-duration:
+          seconds: 2
+
 
 #elk
 logging:

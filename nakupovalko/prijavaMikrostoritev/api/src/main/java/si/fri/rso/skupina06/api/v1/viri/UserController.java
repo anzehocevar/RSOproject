@@ -1,6 +1,7 @@
 package si.fri.rso.skupina06.api.v1.viri;
 
 import com.nimbusds.oauth2.sdk.TokenRequest;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,15 +34,6 @@ public class UserController {
     private static final Logger logger = LogManager.getLogger(UserController.class);
     private final JwtDecoder jwtDecoder;
 
-    @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
-    private String issuerUri;
-
-    @Value("${spring.security.oauth2.resourceserver.client.registration.keycloak.client-id}")
-    private String clientId;
-
-    @Value("${spring.security.oauth2.resourceserver.client.registration.keycloak.client-secret}")
-    private String clientSecret;
-
     private Jwt loggedInUserToken = null;
 
     public UserController(@Qualifier("jwtDecoder") JwtDecoder jwtDecoder) {
@@ -51,6 +43,7 @@ public class UserController {
     /**
      * Get user information from JWT
      */
+    @CircuitBreaker(name = "getUserInfo", fallbackMethod = "fallbackGetUserInfo")
     @GetMapping("/user-info")
     public ResponseEntity<Map<String, Object>> getUserInfo(@AuthenticationPrincipal Jwt jwt) {
         logger.info("Getting logged in user info");
@@ -64,6 +57,19 @@ public class UserController {
         return ResponseEntity.ok(userInfo);
     }
 
+    public ResponseEntity<Map<String, Object>> fallbackGetUserInfo(@AuthenticationPrincipal Jwt jwt, Throwable t) {
+        logger.error("Circuit breaker activated for user-info: {}", t.getMessage());
+
+        Map<String, Object> userInfo = new HashMap<>();
+        userInfo.put("sub", "");
+        userInfo.put("name", null);
+        userInfo.put("email", null);
+        userInfo.put("roles", null);
+
+        return ResponseEntity.ok(userInfo);
+    }
+
+
     @PostMapping("/set-token")
     public ResponseEntity<Void> setUserToken(@RequestBody Map<String, String> body) {
         logger.info(body.toString());
@@ -76,77 +82,16 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-
+    /**
+     * Get logged in user data based on the JWT token of the currently logged in user.
+     */
     @GetMapping("/logged-in-user")
-    public ResponseEntity<Map<String, Object>> getLoggedUserInfo() throws IOException, InterruptedException {
+    public ResponseEntity<Map<String, Object>> getLoggedUserInfo() {
         logger.info("Getting logged in user info {}", loggedInUserToken);
         return getUserInfo(loggedInUserToken);
 
     }
 
-
-
-
-
-
-    @GetMapping("/token")
-    public String getToken() {
-        JwtAuthenticationToken authentication =
-                (JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-
-        Jwt jwt = authentication.getToken();
-        String tokenValue = jwt.getTokenValue();
-
-        return tokenValue;
-    }
-
-    @GetMapping("/logged-in-user2")
-    public ResponseEntity<Map<String, Object>> getLoggedUserInfo2() throws IOException, InterruptedException {
-        String url = issuerUri.concat("/protocol/openid-connect/token");
-        logger.info("Attempting to connect to: {}", url);
-        logger.info("Attempting to connect to: {}", issuerUri);
-
-        //String formData = "grant_type=client_credentials&client_id=".concat(clientId).concat("&client_secret=").concat(clientSecret);
-
-        String formData = String.format("grant_type=client_credentials&client_id=%s&client_secret=%s",
-                            URLEncoder.encode(clientId, StandardCharsets.UTF_8),
-                            URLEncoder.encode(clientSecret, StandardCharsets.UTF_8));
-        logger.info("Grant type: {}", formData);
-
-        HttpClient client = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(10))
-                .build();
-
-        HttpResponse<String> response = null;
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .header("Content-Type", "application/x-www-form-urlencoded")
-                .POST(HttpRequest.BodyPublishers.ofString(formData))
-                .timeout(Duration.ofSeconds(10))
-                .build();
-
-        // Get JWT
-        response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-
-        if(response == null) {
-            return null;
-        }
-
-        if (response.statusCode() == 200) {
-            String responseBody = response.body();
-            JSONObject jsonResponse = new JSONObject(responseBody);
-            String accessToken = jsonResponse.getString("access_token");
-            logger.info("Access token: {}", accessToken);
-
-            return getUserInfo(jwtDecoder.decode(accessToken));
-
-        } else {
-            logger.error("Failed to get JWT of logged in user: {}", response.statusCode());
-        }
-        return null;
-    }
 
     /**
      * Requires USER role to access
