@@ -1,0 +1,32 @@
+azcli login
+azcli group create --name nakupovalkoRS --location westeurope
+azcli aks create --resource-group nakupovalkoRS --name nakupovalkoCluster --node-count 1 --enable-addons monitoring --generate-ssh-keys
+azcli aks get-credentials --resource-group nakupovalkoRS --name nakupovalkoCluster --file ~/.kube/config
+
+kubectl config use-context nakupovalkoCluster
+kubectl apply -f userDeployment.yml
+
+kubectl get pods
+kubectl get deployment
+kubectl get services
+
+kubectl describe deployment user-service
+
+kubectl logs user-service-5cff6dd5f8-pwnqx (you get this from get pods to get errors)
+
+
+DEPLOY EVERYTHING:
+kubectl create namespace nakupovalko
+
+kubectl apply -f elasticsearchDeployment.yml
+kubectl apply -f kibanaDeployment.yml
+kubectl apply -f logstashDeployment.yml
+kubectl apply -f prometheusDeployment.yml
+kubectl apply -f grafanaDeployment.yml
+kubectl apply -f mysqlDeployment.yml
+kubectl apply -f userDeployment.yml
+
+prever da dela lokalno: kubectl port-forward svc/elasticsearch 9200:9200 -n monitoring
+localhost:9200
+
+get public ip:  kubectl get svc user-service -n nakupovalko
