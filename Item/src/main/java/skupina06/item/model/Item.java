@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
+@Table(name = "Item")
 public class Item {
 
     @Id
@@ -13,11 +14,6 @@ public class Item {
     private String name;
     private String description;
     private double price;
-
-//    @ElementCollection
-//    private List<String> assignedUsers;
-
-//    private boolean purchased;
 
     // Getters and setters
     public int getId() {
@@ -52,19 +48,4 @@ public class Item {
         this.price = price;
     }
 
-//    public List<String> getAssignedUsers() {
-//        return assignedUsers;
-//    }
-
-//    public void setAssignedUsers(List<String> assignedUsers) {
-//        this.assignedUsers = assignedUsers;
-//    }
-
-//    public boolean isPurchased() {
-//        return purchased;
-//    }
-
-//    public void setPurchased(boolean purchased) {
-//        this.purchased = purchased;
-//    }
 }
