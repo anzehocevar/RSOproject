@@ -5,7 +5,7 @@ metadata:
   namespace: nakupovalko
 data:
   init.sql: |
-    CREATE TABLE IF NOT EXISTS user (
+    CREATE TABLE IF NOT EXISTS uporabniki (
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(100) NOT NULL,
         surname VARCHAR(100) NOT NULL,
@@ -13,7 +13,7 @@ data:
         email VARCHAR(100) UNIQUE NOT NULL
         );
 
-    INSERT IGNORE INTO user (name, surname, username, email)
+    INSERT IGNORE INTO uporabniki (name, surname, username, email)
     VALUES 
         ('Anze', 'Hočevar', 'anzeh', 'anze.hocevar@gmail.com'),
         ('Veronika', 'Matek', 'vm0012', 'vm0012@student.uni-lj.si'),
@@ -49,21 +49,6 @@ spec:
               value: myuser
             - name: MYSQL_PASSWORD
               value: mypass
-
-          readinessProbe:
-            tcpSocket:
-              port: 3306
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            failureThreshold: 3
-            successThreshold: 1
-          livenessProbe:
-            tcpSocket:
-              port: 3306
-            initialDelaySeconds: 60
-            periodSeconds: 20
-            failureThreshold: 5
-            successThreshold: 1
 
           volumeMounts:
             - name: mysql-data

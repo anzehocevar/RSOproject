@@ -31,14 +31,6 @@ spec:
               port: 8082
             initialDelaySeconds: 60
             periodSeconds: 30
-
-          resources:
-            requests:
-              memory: "128Mi"
-              cpu: "100m"
-            limits:
-              memory: "256Mi"
-              cpu: "250m"
 ---
 apiVersion: v1
 kind: Service
@@ -46,7 +38,7 @@ metadata:
   name: user-service
   namespace: nakupovalko
 spec:
-  #type: LoadBalancer
+  type: LoadBalancer
   ports:
     - port: 8082
   selector:
