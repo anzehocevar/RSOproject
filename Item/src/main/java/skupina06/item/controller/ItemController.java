@@ -44,4 +44,11 @@ public class ItemController {
         itemService.deleteItem(id);
         return "Item with ID " + id + " has been deleted successfully.";
     }
+
+    // Retrieve items by a list of IDs
+    @GetMapping("/batch")
+    public List<Item> getItemsByIds(@RequestParam List<Integer> ids) {
+        return itemService.getItemsByIds(ids);
+    }
+
 }

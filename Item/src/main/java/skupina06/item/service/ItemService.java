@@ -49,4 +49,10 @@ public class ItemService {
         }
         itemRepository.deleteById(id);
     }
+
+    // retrieve multiple items at once
+    public List<Item> getItemsByIds(List<Integer> ids) {
+        return itemRepository.findAllById(ids);
+    }
+
 }
