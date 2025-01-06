@@ -5,14 +5,15 @@ services:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: password
     volumes:
-      - ./keycloak:/opt/keycloak/data/h2
+      #- ./keycloak:/opt/keycloak/data/h2
+      - ./keycloak-config:/opt/keycloak/data/import
     ports:
       - "8080:8080"
-    command: start-dev
+    command: start-dev --import-realm
     networks:
       - prijava
 
-  nakupovalko-prijava:
+  prijava-service:
     build:
       context: .
     ports:

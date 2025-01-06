@@ -1,178 +1,38 @@
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: keycloak
+  name: prijava-service
+  labels:
+    app: prijava-service
+  namespace: nakupovalko
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: keycloak
+      app: nakupovalko-exposer #so its on the same external ip
   template:
     metadata:
       labels:
-        app: keycloak
+        app: nakupovalko-exposer
     spec:
       containers:
-        - name: keycloak
-          image: quay.io/keycloak/keycloak:latest
-          ports:
-            - containerPort: 8080
-          env:
-            - name: KEYCLOAK_ADMIN
-              value: "admin"
-            - name: KEYCLOAK_ADMIN_PASSWORD
-              value: "password"
-          command: ["start-dev"]
-          volumeMounts:
-            - name: keycloak-data
-              mountPath: /opt/keycloak/data/h2
-      volumes:
-        - name: keycloak-data
-          emptyDir: {}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: keycloak
-spec:
-  selector:
-    app: keycloak
-  ports:
-    - protocol: TCP
-      port: 8080
-      targetPort: 8080
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nakupovalko-prijava
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: nakupovalko-prijava
-  template:
-    metadata:
-      labels:
-        app: nakupovalko-prijava
-    spec:
-      containers:
-        - name: nakupovalko-prijava
-          image: nakupovalko-prijava:latest
+        - name: prijava-service
+          image: vm0012/nakupovalko-prijava:2.0.0
           ports:
             - containerPort: 8081
           env:
-            - name: KEYCLOAK_URL
-              value: "http://keycloak:8080"
-          volumeMounts: []
+            - name: KEYCLOAK_ISSUER_URI
+              value: "http://20.61.156.48:8080/realms/nakupovalko"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: nakupovalko-prijava
+  name: prijava-service
+  namespace: nakupovalko
 spec:
   selector:
-    app: nakupovalko-prijava
+    app: prijava-service
   ports:
     - protocol: TCP
       port: 8081
       targetPort: 8081
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: elasticsearch
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: elasticsearch
-  template:
-    metadata:
-      labels:
-        app: elasticsearch
-    spec:
-      containers:
-        - name: elasticsearch
-          image: docker.elastic.co/elasticsearch/elasticsearch:8.6.2
-          ports:
-            - containerPort: 9200
-          env:
-            - name: discovery.type
-              value: "single-node"
-            - name: xpack.security.enabled
-              value: "false"
-            - name: ES_JAVA_OPTS
-              value: "-Xms512m -Xmx512m"
-          volumeMounts:
-            - name: elasticsearch-data
-              mountPath: /usr/share/elasticsearch/data
-      volumes:
-        - name: elasticsearch-data
-          emptyDir: {}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: elasticsearch
-spec:
-  selector:
-    app: elasticsearch
-  ports:
-    - protocol: TCP
-      port: 9200
-      targetPort: 9200
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: logstash
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: logstash
-  template:
-    metadata:
-      labels:
-        app: logstash
-    spec:
-      containers:
-        - name: logstash
-          image: docker.elastic.co/logstash/logstash:8.6.2
-          ports:
-            - containerPort: 5044
-          volumeMounts:
-            - name: logstash-config
-              mountPath: /usr/share/logstash/pipeline
-      volumes:
-        - name: logstash-config
-          configMap:
-            name: logstash-config
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: logstash-config
-  namespace: default
-  labels:
-    app: logstash
-    team: devops
-data:
-  logstash.conf: |
-    input {
-      beats {
-        port => "5044"
-      }
-    }
-
-    output {
-      elasticsearch {
-        hosts => "elasticsearch:9200"
-        index => "new_db"
-        document_type => "records"
-    }
-}
-
----

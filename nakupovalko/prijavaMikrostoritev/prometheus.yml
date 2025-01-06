@@ -5,6 +5,6 @@ scrape_configs:
   - job_name: 'login-service'
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: ['nakupovalko-prijava:8081']
+      - targets: ['prijava-service:8081']
 
 

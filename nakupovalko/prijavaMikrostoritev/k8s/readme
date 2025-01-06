@@ -1,0 +1,19 @@
+keycloak database:
+Create a Storage Account na  azure
+
+created storage account -> containers under data storage ->add container
+
+
+#install drivers
+helm repo add azureblob-csi-driver https://raw.githubusercontent.com/kubernetes-sigs/blob-csi-driver/master/charts
+helm repo update
+helm install blob-csi-driver azureblob-csi-driver/blob-csi-driver --namespace kube-system
+
+upload file:
+azcli storage blob upload --account-name <your-storage-account> --container-name keycloak-config --name keycloak-config.json --file /path/to/your/keycloak-config.json
+azcli storage blob upload --account-name nakupovalkokeycloak --container-name keycloak-config --name keycloakdb.mv.db --file /home/veronika/faks/rso/RSOproject/nakupovalko/prijavaMikrostoritev/k8s/keycloak/keycloakdb.mv.db
+
+
+secret.yml:
+get storage key by running:
+az storage account keys list --resource-group <your-resource-group> --account-name <storage-name> --query "[0].value" -o tsv

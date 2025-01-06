@@ -16,12 +16,12 @@ const home = Vue.createApp({
         },
 
         fetchToken(code) {
-            const tokenUrl = "http://localhost:8080/realms/nakupovalko/protocol/openid-connect/token";
+            const tokenUrl = "http://20.61.156.48:8080/realms/nakupovalko/protocol/openid-connect/token";
             const body = new URLSearchParams({
                 client_id: 'nakupovalko-prijava-client',
                 client_secret: '9so9VdJZJXQnH8pBzfXSGZivWY2Bq5ZY',
                 code: code,
-                redirect_uri: 'http://localhost:8081/home',
+                redirect_uri: 'http://20.61.156.48:8081/home',
                 grant_type: 'authorization_code'
             });
 
@@ -45,7 +45,7 @@ const home = Vue.createApp({
         },
 
         saveToken() {
-            fetch('http://localhost:8081/api/set-token', {
+            fetch('http://20.61.156.48:8081/api/set-token', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
