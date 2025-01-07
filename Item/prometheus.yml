@@ -1,7 +1,22 @@
 global:
   scrape_interval: 15s
 
+#scrape_configs:
+#  - job_name: "item-service"
+#    metrics_path: "/actuator/prometheus"
+#    static_configs:
+#      - targets: ["item-service:8089"]
+
 scrape_configs:
-  - job_name: 'item-service'
+  - job_name: "item-service"
+    metrics_path: "/actuator/prometheus"
     static_configs:
-      - targets: ['host.docker.internal:8089'] # Replace with your service endpoint
+      - targets: [ "item-service:8089" ]
+
+
+
+#scrape_configs:
+#  - job_name: 'item-service'
+#    metrics_path: "/actuator/prometheus"  # Path to Prometheus metrics
+#    static_configs:
+#      - targets: ['host.docker.internal:8089\items'] # Replace with your service endpoint
