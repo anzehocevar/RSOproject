@@ -9,7 +9,7 @@ services:
       - ./keycloak-config:/opt/keycloak/data/import
     ports:
       - "8080:8080"
-    command: start-dev --import-realm
+    command: start-dev --import-realm --import-strategy=OVERWRITE_EXISTING
     networks:
       - prijava
 

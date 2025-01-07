@@ -90,9 +90,16 @@ public class UserController {
             return ResponseEntity.badRequest().build();
         }
         logger.info("Setting logged in user token {}", token);
-        loggedInUserToken = jwtDecoder.decode(token);
+        try {
+            loggedInUserToken = jwtDecoder.decode(token);
+        }
+        catch (Exception e) {
+            logger.error(e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.ok().build();
     }
+
 
     @Operation(
             summary = "Pridobi prijavljenega uporabnika",

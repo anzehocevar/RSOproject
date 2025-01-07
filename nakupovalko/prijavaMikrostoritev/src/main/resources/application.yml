@@ -21,8 +21,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://20.61.156.48:8080/realms/nakupovalko
-          jwk-set-uri: http://20.61.156.48:8080/realms/nakupovalko/protocol/openid-connect/certs
+          issuer-uri: http://keycloak:8080/realms/nakupovalko #KEYCLOAK NE LOCALHOST!!!!
+          jwk-set-uri: http://keycloak:8080/realms/nakupovalko/protocol/openid-connect/certs #KEYCLOAK NE LOCALHOST!!!!
         client:
           registration:
             keycloak:
@@ -32,7 +32,7 @@ spring:
               scope: openid, profile, email #to use OIDC, you must always request at least the openid scope.
           provider:
             keycloak:
-              issuer-uri: http://20.61.156.48:8080/
+              issuer-uri: http://keycloak:8080/ #KEYCLOAK NE LOCALHOST!!!!
 
               #Redirect to keycloak login, after login user is redirected using redirectURI
               #http://keycloak:8080/realms/nakupovalko/protocol/openid-connect/auth?scope=openid&response_type=code&client_id=nakupovalko-prijava-client&redirect_uri=https://www.google.com

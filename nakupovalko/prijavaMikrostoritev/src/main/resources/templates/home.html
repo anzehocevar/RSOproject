@@ -2,12 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ADMIN!</title>
+    <title>Nakupovalko</title>
     <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
+
 </head>
 <body>
-    <H1>Home</H1>
+
+    <H1>Nakupovalko domača stran</H1>
+
     <div id="home">
+        <button @click="goProfile">Profil</button>
+        <button @click="goSeznam">Moji seznami</button>
+        <button @click="logout">Odjava</button>
     </div>
 
     <script src="/home.js"></script>
