@@ -11,7 +11,7 @@ const app = Vue.createApp({
     methods: {
         goHome() {
             //TODO: change location to home
-            window.location.href = '/users';
+            window.location.href = 'http://localhost:8081/home';
             alert('Redirecting to home')
         },
         logout() {
