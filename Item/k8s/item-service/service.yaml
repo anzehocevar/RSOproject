@@ -10,3 +10,17 @@ spec:
       port: 8089
       targetPort: 8089
   type: ClusterIP
+
+# externally
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: item-service
+#spec:
+#  selector:
+#    app: item-service
+#  ports:
+#    - protocol: TCP
+#      port: 80
+#      targetPort: 8089
+#  type: LoadBalancer
