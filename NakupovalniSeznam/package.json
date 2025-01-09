@@ -1,0 +1,18 @@
+{
+  "name": "shopping-list-frontend",
+  "version": "1.0.0",
+  "description": "Frontend for Shopping List application",
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@vue/cli-service": "^5.0.8",
+    "vue-router": "^4.5.0"
+  }
+}

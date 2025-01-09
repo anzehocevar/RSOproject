@@ -13,20 +13,20 @@ services:
 #      MANAGEMENT.METRICS.EXPORT.PROMETHEUS.ENABLED: true
 #      SPRINGDOC.API-DOCS.PATH: /v3/api-docs
 #    depends_on:
-#      - mysql?
+#      - mysql
     networks:
       - app
 
-#  mysql:
-#    image: mysql:8.0
-#    restart: always
-#    environment:
-#      MYSQL_ROOT_PASSWORD: mysql
-#      MYSQL_DATABASE: shopping_list_db
-#    ports:
-#      - "3306:3306"
-#    networks:
-#      - app
+  mysql:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: shopping_list_db
+    ports:
+      - "3306:3306" # Map MySQL's internal 3306 to host's 3307
+    networks:
+      - app
 
 #  prometheus:
 #    image: prom/prometheus
