@@ -11,11 +11,11 @@ FROM openjdk:17-jdk-slim
 RUN mkdir /app
 WORKDIR /app
 # Copy the built JAR from the build stage to the runtime container
-COPY --from=build ./app/target/ShoppingList-0.0.1-SNAPSHOT.jar /app
+COPY --from=build ./app/target/NakupovalniSeznam-0.0.1-SNAPSHOT.jar /app
 # Expose the application's port
 EXPOSE 8089
 # Start the application
-ENTRYPOINT ["java", "-jar", "ShoppingList-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "NakupovalniSeznam-0.0.1-SNAPSHOT.jar"]
 
 
 ## Use a lightweight base image with OpenJDK
