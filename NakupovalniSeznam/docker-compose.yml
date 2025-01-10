@@ -11,7 +11,7 @@ services:
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 10s
-      timeout: 5s
+      timeout: 10s
       retries: 3
     networks:
       - app
@@ -34,7 +34,7 @@ services:
 #      SPRINGDOC.API-DOCS.PATH: /v3/api-docs
     depends_on:
       mysql:
-        condition: service_started
+        condition: service_healthy
     networks:
       - app
     restart: on-failure
