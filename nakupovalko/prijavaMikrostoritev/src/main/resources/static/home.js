@@ -1,11 +1,11 @@
 const home = Vue.createApp({
     methods: {
         goProfile() {
-            window.location.href = 'http://localhost:8082/profile';
+            window.location.href = 'http://user.nakupovalko.com/profile';
             alert('Redirecting to profile')
         },
         goSeznam() {
-            window.location.href = 'http://localhost:8082/profile'; // TODO: hočo nej da link
+            window.location.href = 'http://user.nakupovalko.com/profile'; // TODO: hočo nej da link
             alert('Redirecting to seznam')
         },
         logout() {
@@ -28,12 +28,12 @@ const home = Vue.createApp({
         },
 
         fetchToken(code) {
-            const tokenUrl = "http://localhost:8080/realms/nakupovalko/protocol/openid-connect/token";
+            const tokenUrl = "http://keycloak.nakupovalko.com/realms/nakupovalko/protocol/openid-connect/token";
             const body = new URLSearchParams({
                 client_id: 'nakupovalko-prijava-client',
                 client_secret: '9so9VdJZJXQnH8pBzfXSGZivWY2Bq5ZY',
                 code: code,
-                redirect_uri: 'http://localhost:8081/home',
+                redirect_uri: 'http://login.nakupovalko.com/home',
                 grant_type: 'authorization_code'
             });
 
@@ -57,7 +57,7 @@ const home = Vue.createApp({
         },
 
         saveToken() {
-            fetch('http://localhost:8081/api/set-token', {
+            fetch('http://login.nakupovalko.com/api/set-token', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

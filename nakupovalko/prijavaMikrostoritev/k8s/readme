@@ -9,7 +9,9 @@ helm repo add azureblob-csi-driver https://raw.githubusercontent.com/kubernetes-
 helm repo update
 helm install blob-csi-driver azureblob-csi-driver/blob-csi-driver --namespace kube-system
 
-upload file:
+upload file -> js sm na roke to uploadala:
+na kubernetesu nrdis storage account (nakupovalkokeycloak) in znotraj tega container (keycloak-config) in tm je potem upload opcija
+
 azcli storage blob upload --account-name <your-storage-account> --container-name keycloak-config --name keycloak-config.json --file /path/to/your/keycloak-config.json
 azcli storage blob upload --account-name nakupovalkokeycloak --container-name keycloak-config --name keycloakdb.mv.db --file /home/veronika/faks/rso/RSOproject/nakupovalko/prijavaMikrostoritev/k8s/keycloak/keycloakdb.mv.db
 
@@ -17,3 +19,47 @@ azcli storage blob upload --account-name nakupovalkokeycloak --container-name ke
 secret.yml:
 get storage key by running:
 az storage account keys list --resource-group <your-resource-group> --account-name <storage-name> --query "[0].value" -o tsv
+#azcli storage account keys list --resource-group nakupovalkoRS --account-name nakupovalkokeycloak --query "[0].value" -o tsv
+
+
+
+ingress:
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+helm install nginx-ingress bitnami/nginx-ingress-controller --set controller.publishService.enabled=true
+
+tls secret:
+# Generate a private key
+openssl genrsa -out nakupovalko.key 2048
+
+# Generate a self-signed certificate
+openssl req -x509 -new -nodes -key nakupovalko.key -sha256 -days 365 -out nakupovalko.crt
+The common name should match the hostname -> nakupovalko.com!!!!
+
+OR
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: nakupovalko-tls-secret
+  namespace: dev
+type: kubernetes.io/tls
+data:
+  server.crt: |
+       <crt contents here>
+  server.key: |
+       <private key contents here>
+
+
+test certificate:
+curl https://login.nakupovalko.com -kv -> should display server certificate
+
+
+
+kubectl apply -f keycloakPVC.yml
+kubectl apply -f keycloakDeployment.yml
+kubectl apply -f secret.yml
+kubectl apply -f prijavaDeployment.yml
+
+
+

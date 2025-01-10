@@ -1,0 +1,58 @@
+{
+  "apiVersion": "v1",
+  "kind": "Namespace",
+  "metadata": {
+    "creationTimestamp": "2025-01-08T19:15:42Z",
+    "deletionTimestamp": "2025-01-08T20:24:02Z",
+    "labels": {
+      "kubernetes.io/metadata.name": "cert-manager",
+      "name": "cert-manager"
+    },
+    "name": "cert-manager",
+    "resourceVersion": "327778",
+    "uid": "dc1ff83d-21fc-472a-b91b-b3dd4140a9de"
+  },
+  "spec": {
+    "finalizers": []
+  },
+  "status": {
+    "conditions": [
+      {
+        "lastTransitionTime": "2025-01-08T20:24:15Z",
+        "message": "Discovery failed for some groups, 1 failing: unable to retrieve the complete list of server APIs: acme.duckdns.org/v1alpha1: stale GroupVersion discovery: acme.duckdns.org/v1alpha1",
+        "reason": "DiscoveryFailed",
+        "status": "True",
+        "type": "NamespaceDeletionDiscoveryFailure"
+      },
+      {
+        "lastTransitionTime": "2025-01-08T20:24:10Z",
+        "message": "All legacy kube types successfully parsed",
+        "reason": "ParsedGroupVersions",
+        "status": "False",
+        "type": "NamespaceDeletionGroupVersionParsingFailure"
+      },
+      {
+        "lastTransitionTime": "2025-01-08T20:24:10Z",
+        "message": "All content successfully deleted, may be waiting on finalization",
+        "reason": "ContentDeleted",
+        "status": "False",
+        "type": "NamespaceDeletionContentFailure"
+      },
+      {
+        "lastTransitionTime": "2025-01-08T20:24:15Z",
+        "message": "All content successfully removed",
+        "reason": "ContentRemoved",
+        "status": "False",
+        "type": "NamespaceContentRemaining"
+      },
+      {
+        "lastTransitionTime": "2025-01-08T20:24:10Z",
+        "message": "All content-preserving finalizers finished",
+        "reason": "ContentHasNoFinalizers",
+        "status": "False",
+        "type": "NamespaceFinalizersRemaining"
+      }
+    ],
+    "phase": "Terminating"
+  }
+}

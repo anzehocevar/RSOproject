@@ -9,11 +9,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: nakupovalko-exposer #so its on the same external ip
+      app: keycloak
   template:
     metadata:
       labels:
-        app: nakupovalko-exposer
+        app: keycloak
     spec:
       containers:
         - name: keycloak
@@ -53,3 +53,4 @@ spec:
     - protocol: TCP
       port: 8080
       targetPort: 8080
+  type: NodePort

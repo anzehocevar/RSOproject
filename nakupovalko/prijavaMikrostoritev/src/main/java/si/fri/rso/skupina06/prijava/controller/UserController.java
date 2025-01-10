@@ -121,7 +121,6 @@ public class UserController {
 
     }
 
-
     @Operation(
             summary = "Končna točka za role anotherRole",
             description = "Končna točka do katere dostopajo lahko le uporabniki z vlogo 'anotherRole'"

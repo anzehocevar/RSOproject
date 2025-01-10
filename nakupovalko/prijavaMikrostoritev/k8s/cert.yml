@@ -1,0 +1,28 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt
+spec:
+  acme:
+    email: vm0012@student.uni-lj.si
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-private-key
+    solvers:
+      - http01:
+          ingress:
+            class: nginx
+
+---
+
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: nakupovalko-cert
+  namespace: nakupovalko
+spec:
+  secretName: nakupovalko-tls
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
+

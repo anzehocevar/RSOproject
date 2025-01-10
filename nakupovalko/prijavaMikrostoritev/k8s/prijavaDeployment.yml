@@ -9,20 +9,20 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: nakupovalko-exposer #so its on the same external ip
+      app: prijava-service
   template:
     metadata:
       labels:
-        app: nakupovalko-exposer
+        app: prijava-service
     spec:
       containers:
         - name: prijava-service
-          image: vm0012/nakupovalko-prijava:2.0.0
+          image: vm0012/nakupovalko-prijava:2.0.1
           ports:
             - containerPort: 8081
           env:
             - name: KEYCLOAK_ISSUER_URI
-              value: "http://localhost:8080/realms/nakupovalko"
+              value: "http://keycloak.nakupovalko.com/realms/nakupovalko"
 ---
 apiVersion: v1
 kind: Service
@@ -36,3 +36,4 @@ spec:
     - protocol: TCP
       port: 8081
       targetPort: 8081
+  type: NodePort
