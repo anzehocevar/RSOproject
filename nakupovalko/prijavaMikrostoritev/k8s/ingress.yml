@@ -13,7 +13,6 @@ spec:
       http:
         paths:
           # Keycloak
-          #- path: /realms/nakupovalko/protocol/openid-connect/token
           - path: /realms
             pathType: Prefix
             backend:
@@ -22,8 +21,7 @@ spec:
                 port:
                   number: 8080
 
-
-          # Prijava
+          # Prijava service
           - path: /nakupovalko-login
             pathType: Prefix
             backend:
@@ -31,22 +29,14 @@ spec:
                 name: prijava-service
                 port:
                   number: 8081
-          - path: /home
+          - path: /(home|admin|api)
             pathType: Prefix
             backend:
               service:
                 name: prijava-service
                 port:
                   number: 8081
-          - path: /admin
-            pathType: Prefix
-            backend:
-              service:
-                name: prijava-service
-                port:
-                  number: 8081
-
-          - path: /api
+          - path: /(login|home).js
             pathType: Prefix
             backend:
               service:
@@ -54,37 +44,14 @@ spec:
                 port:
                   number: 8081
 
-          - path: /users
+          # User service
+          - path: /(users|profile)
             pathType: Prefix
             backend:
               service:
                 name: user-service
                 port:
                   number: 8082
-
-          - path: /profile
-            pathType: Prefix
-            backend:
-              service:
-                name: user-service
-                port:
-                  number: 8082
-
-          - path: /login.js
-            pathType: Prefix
-            backend:
-              service:
-                name: prijava-service
-                port:
-                  number: 8081
-
-          - path: /home.js
-            pathType: Prefix
-            backend:
-              service:
-                name: prijava-service
-                port:
-                  number: 8081
           - path: /profile.js
             pathType: Prefix
             backend:
@@ -97,3 +64,8 @@ spec:
     - hosts:
         - nakupovalko.duckdns.org
       secretName: ingress-tls
+
+
+
+
+
