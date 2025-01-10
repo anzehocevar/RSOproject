@@ -33,7 +33,7 @@ public class ProfileController {
 
         RestTemplate restTemplate = new RestTemplate();
 
-        ResponseEntity<Map> response = restTemplate.getForEntity("http://20.61.156.48:8081/api/logged-in-user", Map.class);
+        ResponseEntity<Map> response = restTemplate.getForEntity("https://nakupovalko.duckdns.org/api/logged-in-user", Map.class);
 
         if (response.getStatusCode().is2xxSuccessful()) {
             Map<String, Object> responseBody = response.getBody();

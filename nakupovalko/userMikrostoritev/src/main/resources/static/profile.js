@@ -11,7 +11,7 @@ const app = Vue.createApp({
     methods: {
         goHome() {
             //TODO: change location to home
-            window.location.href = 'http://localhost:8081/home';
+            window.location.href = 'https://nakupovalko.duckdns.org/home';
             alert('Redirecting to home')
         },
         logout() {
@@ -21,13 +21,13 @@ const app = Vue.createApp({
 
         async fetchUserInfo() {
             try {
-                const response = await fetch('http://20.61.156.48:8082/users/active');
+                const response = await fetch('https://nakupovalko.duckdns.org/users/active');
 
                 if (!response.ok) {
                     throw new Error('Failed to fetch user data');
                 }
 
-                const idResponse = await fetch('http://20.61.156.48:8082/users/active/id');
+                const idResponse = await fetch('https://nakupovalko.duckdns.org/users/active/id');
                 if (!response.ok) {
                     throw new Error('Failed to fetch user data');
                 }
@@ -51,7 +51,7 @@ const app = Vue.createApp({
         saveEdit(key) {
             this.editFields[key] = false;
 
-            const response = fetch(`http://20.61.156.48:8082/users/${this.id}`, {
+            const response = fetch(`https://nakupovalko.duckdns.org/users/${this.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
