@@ -7,11 +7,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: nakupovalko-exposer
+      app: user-service
   template:
     metadata:
       labels:
-        app: nakupovalko-exposer
+        app: user-service
     spec:
       containers:
         - name: user-service
@@ -38,7 +38,7 @@ metadata:
   name: user-service
   namespace: nakupovalko
 spec:
-  type: LoadBalancer
+  type: NodePort
   ports:
     - port: 8082
   selector:
