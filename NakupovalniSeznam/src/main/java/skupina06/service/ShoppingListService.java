@@ -44,7 +44,7 @@ public class ShoppingListService {
                 .orElseThrow(() -> new IllegalArgumentException("Shopping List not found"));
 
         // Optional: Validate item exists in the Item service
-        validateItemExists(itemId);
+//        validateItemExists(itemId);
 
         shoppingList.getItemIds().add(itemId);
         return shoppingListRepository.save(shoppingList);
