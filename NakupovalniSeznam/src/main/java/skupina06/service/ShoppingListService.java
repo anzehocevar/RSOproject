@@ -6,6 +6,7 @@ import org.springframework.web.client.RestTemplate;
 import skupina06.model.ShoppingList;
 import skupina06.repository.ShoppingListRepository;
 
+import java.util.stream.Collectors;
 import java.util.List;
 
 @Service
@@ -78,5 +79,48 @@ public class ShoppingListService {
         if (itemExists == null || !itemExists) {
             throw new IllegalArgumentException("Item with ID " + itemId + " does not exist");
         }
+    }
+
+    public ShoppingList addUserToShoppingList(Long shoppingListId, Long userId) {
+        ShoppingList shoppingList = shoppingListRepository.findById(shoppingListId)
+                .orElseThrow(() -> new IllegalArgumentException("ShoppingList not found"));
+
+        if (!shoppingList.getUserIds().contains(userId)) {
+            shoppingList.getUserIds().add(userId);
+            shoppingListRepository.save(shoppingList);
+        }
+        return shoppingList;
+    }
+
+    public ShoppingList removeUserFromShoppingList(Long shoppingListId, Long userId) {
+        ShoppingList shoppingList = shoppingListRepository.findById(shoppingListId)
+                .orElseThrow(() -> new IllegalArgumentException("ShoppingList not found"));
+
+        shoppingList.getUserIds().remove(userId);
+        shoppingListRepository.save(shoppingList);
+        return shoppingList;
+    }
+
+    // Get a shopping list by ID
+    public ShoppingList getShoppingListById(Long shoppingListId) {
+        return shoppingListRepository.findById(shoppingListId)
+                .orElseThrow(() -> new IllegalArgumentException("Shopping List with ID " + shoppingListId + " not found"));
+    }
+
+    // Get all users for a shopping list
+    public List<Long> getUsersForShoppingList(Long shoppingListId) {
+        ShoppingList shoppingList = shoppingListRepository.findById(shoppingListId)
+                .orElseThrow(() -> new IllegalArgumentException("Shopping List with ID " + shoppingListId + " not found"));
+
+        // Return the list of user IDs associated with this shopping list
+        return shoppingList.getUserIds();
+    }
+
+    // Get all shopping lists for a user
+    public List<ShoppingList> getShoppingListsForUser(Long userId) {
+        // Filter shopping lists where the user ID exists in the userIds field
+        return shoppingListRepository.findAll().stream()
+                .filter(shoppingList -> shoppingList.getUserIds().contains(userId))
+                .collect(Collectors.toList());
     }
 }

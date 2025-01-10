@@ -18,12 +18,17 @@ public class ShoppingList {
     @ElementCollection
     @CollectionTable(name = "shopping_list_items", joinColumns = @JoinColumn(name = "shopping_list_id"))
     @Column(name = "item_id")
-    private List<Long> itemIds = new ArrayList<>(); // IDs of items in the shopping list
+    private List<Long> itemIds = new ArrayList<>();
 
     @ElementCollection
     @CollectionTable(name = "bought_items", joinColumns = @JoinColumn(name = "shopping_list_id"))
     @Column(name = "item_id")
-    private List<Long> boughtItems = new ArrayList<>(); // IDs of bought items
+    private List<Long> boughtItems = new ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable(name = "shopping_list_users", joinColumns = @JoinColumn(name = "shopping_list_id"))
+    @Column(name = "user_id")
+    private List<Long> userIds = new ArrayList<>(); // List of user IDs with access
 
     // Getters and Setters
     public Long getId() {
@@ -57,4 +62,14 @@ public class ShoppingList {
     public void setBoughtItems(List<Long> boughtItems) {
         this.boughtItems = boughtItems;
     }
+
+    public List<Long> getUserIds() {
+        return userIds;
+    }
+
+    public void setUserIds(List<Long> userIds) {
+        this.userIds = userIds;
+    }
+
+
 }
