@@ -4,27 +4,17 @@ metadata:
   name: nakupovalko-ingress
   namespace: nakupovalko
   annotations:
-    kubernetes.io/ingress.class: nginx
     cert-manager.io/cluster-issuer: cert-manager-webhook-duckdns-production #cert-manager-webhook-duckdns-staging
-    acme.cert-manager.io/http01-ingress-class: nginx
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+
 spec:
-  ingressClassName: nginx
+  ingressClassName: webapprouting.kubernetes.azure.com
   rules:
-    #- host: nakupovalko.duckdns.org
-    - http:
+    - host: nakupovalko.duckdns.org
+      http:
         paths:
           # Keycloak
-          - path: /realms/nakupovalko/protocol/openid-connect/token
-            pathType: Prefix
-            backend:
-              service:
-                name: keycloak
-                port:
-                  number: 8080
-
-          #- path: /realms/nakupovalko/protocol/openid-connect/auth?scope=openid&response_type=code&client_id=nakupovalko-prijava-client&redirect_uri=https:/nakupovalko.duckdns.org/home"
-          - path: /realms/nakupovalko/protocol/openid-connect/auth
+          #- path: /realms/nakupovalko/protocol/openid-connect/token
+          - path: /realms
             pathType: Prefix
             backend:
               service:
@@ -56,38 +46,13 @@ spec:
                 port:
                   number: 8081
 
-          - path: /api/user-info
+          - path: /api
             pathType: Prefix
             backend:
               service:
                 name: prijava-service
                 port:
                   number: 8081
-
-          - path: /api/set-token
-            pathType: Prefix
-            backend:
-              service:
-                name: prijava-service
-                port:
-                  number: 8081
-
-          - path: /api/logged-in-user
-            pathType: Prefix
-            backend:
-              service:
-                name: prijava-service
-                port:
-                  number: 8081
-
-          - path: /api/protected
-            pathType: Prefix
-            backend:
-              service:
-                name: prijava-service
-                port:
-                  number: 8081
-
 
           - path: /users
             pathType: Prefix
@@ -105,8 +70,24 @@ spec:
                 port:
                   number: 8082
 
+          - path: /login.js
+            pathType: Prefix
+            backend:
+              service:
+                name: prijava-service
+                port:
+                  number: 8081
+
+          - path: /home.js
+            pathType: Prefix
+            backend:
+              service:
+                name: prijava-service
+                port:
+                  number: 8081
+
 
   tls:
     - hosts:
-        - 52.143.5.236
+        - nakupovalko.duckdns.org
       secretName: ingress-tls

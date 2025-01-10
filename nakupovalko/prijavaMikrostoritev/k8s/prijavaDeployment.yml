@@ -17,12 +17,12 @@ spec:
     spec:
       containers:
         - name: prijava-service
-          image: vm0012/nakupovalko-prijava:2.0.1
+          image: vm0012/nakupovalko-prijava:1.0.0
           ports:
             - containerPort: 8081
           env:
             - name: KEYCLOAK_ISSUER_URI
-              value: "http://keycloak.nakupovalko.com/realms/nakupovalko"
+              value: "https://nakupovalko.duckdns.org/realms/nakupovalko"
 ---
 apiVersion: v1
 kind: Service

@@ -3,7 +3,7 @@ const app = Vue.createApp({
     methods: {
         handleLogin(){
             console.log("i clicked")
-            const url = "http://keycloak.nakupovalko.com/realms/nakupovalko/protocol/openid-connect/auth?scope=openid&response_type=code&client_id=nakupovalko-prijava-client&redirect_uri=http://login.nakupovalko.com/home"
+            const url = "https://nakupovalko.duckdns.org/realms/nakupovalko/protocol/openid-connect/auth?scope=openid&response_type=code&client_id=nakupovalko-prijava-client&redirect_uri=https://nakupovalko.duckdns.org/home"
             window.location.href = url
 
             fetch(url)
@@ -20,7 +20,7 @@ const app = Vue.createApp({
             this.saveToken();
         },
         saveToken() {
-            fetch('http://login.nakupovalko.com/api/set-token', {
+            fetch('https://nakupovalko.duckdns.org/api/set-token', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
