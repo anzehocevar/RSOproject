@@ -85,7 +85,13 @@ spec:
                 name: prijava-service
                 port:
                   number: 8081
-
+          - path: /profile.js
+            pathType: Prefix
+            backend:
+              service:
+                name: user-service
+                port:
+                  number: 8082
 
   tls:
     - hosts:
