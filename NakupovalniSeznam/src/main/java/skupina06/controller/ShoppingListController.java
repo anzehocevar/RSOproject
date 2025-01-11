@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/shopping-lists")
 @Tag(name = "Shopping List API", description = "Manage shopping lists and items")

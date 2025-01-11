@@ -3,13 +3,10 @@ kind: Ingress
 metadata:
   name: shoppinglist-ingress
   namespace: nakupovalko
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   rules:
-    - host: shoppinglist.local
-      http:
+    - http:
         paths:
           - path: /api/shopping-lists
             pathType: Prefix
