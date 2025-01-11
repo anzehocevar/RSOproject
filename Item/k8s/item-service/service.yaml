@@ -10,7 +10,7 @@ spec:
     - protocol: TCP
       port: 8089
       targetPort: 8089
-  type: LoadBalancer
+  type: ClusterIP
 
 # externally
 #apiVersion: v1
