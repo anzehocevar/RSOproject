@@ -1,0 +1,71 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nakupovalko-ingress
+  namespace: nakupovalko
+  annotations:
+    cert-manager.io/cluster-issuer: cert-manager-webhook-duckdns-production #cert-manager-webhook-duckdns-staging
+
+spec:
+  ingressClassName: webapprouting.kubernetes.azure.com
+  rules:
+    - host: nakupovalko.duckdns.org
+      http:
+        paths:
+          # Keycloak
+          - path: /realms
+            pathType: Prefix
+            backend:
+              service:
+                name: keycloak
+                port:
+                  number: 8080
+
+          # Prijava service
+          - path: /nakupovalko-login
+            pathType: Prefix
+            backend:
+              service:
+                name: prijava-service
+                port:
+                  number: 8081
+          - path: /(home|admin|api)
+            pathType: Prefix
+            backend:
+              service:
+                name: prijava-service
+                port:
+                  number: 8081
+          - path: /(login|home).js
+            pathType: Prefix
+            backend:
+              service:
+                name: prijava-service
+                port:
+                  number: 8081
+
+          # User service
+          - path: /(users|profile)
+            pathType: Prefix
+            backend:
+              service:
+                name: user-service
+                port:
+                  number: 8082
+          - path: /profile.js
+            pathType: Prefix
+            backend:
+              service:
+                name: user-service
+                port:
+                  number: 8082
+
+  tls:
+    - hosts:
+        - nakupovalko.duckdns.org
+      secretName: ingress-tls
+
+
+
+
+

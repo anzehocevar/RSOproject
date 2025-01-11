@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: keycloak-config-pvc
+  namespace: nakupovalko
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: azureblob
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: keycloak-config-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: azureblob
+  csi:
+    driver: blob.csi.azure.com
+    readOnly: false
+    volumeHandle: keycloak-config
+    nodeStageSecretRef:
+      name: azure-storage-secret
+      namespace: nakupovalko
+    volumeAttributes:
+      containerName: keycloak-config
+      storageAccount: nakupovalkokeycloak

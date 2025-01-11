@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  labels:
+    app: keycloak
+  namespace: nakupovalko
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      containers:
+        - name: keycloak
+          image: quay.io/keycloak/keycloak:latest
+          securityContext:
+            runAsUser: 0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: KEYCLOAK_ADMIN
+              value: "admin"
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              value: "password"
+
+          volumeMounts:
+            - name: keycloak-config
+              mountPath: /opt/keycloak/data/import
+          args:
+            - "start-dev"
+            - "--import-realm"
+      volumes:
+        - name: keycloak-config
+          persistentVolumeClaim:
+            claimName: keycloak-config-pvc
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+  namespace: nakupovalko
+spec:
+  selector:
+    app: keycloak
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: NodePort

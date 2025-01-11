@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prijava-service
+  labels:
+    app: prijava-service
+  namespace: nakupovalko
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prijava-service
+  template:
+    metadata:
+      labels:
+        app: prijava-service
+    spec:
+      containers:
+        - name: prijava-service
+          image: vm0012/nakupovalko-prijava:1.0.0
+          ports:
+            - containerPort: 8081
+          env:
+            - name: KEYCLOAK_ISSUER_URI
+              value: "https://nakupovalko.duckdns.org/realms/nakupovalko"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prijava-service
+  namespace: nakupovalko
+spec:
+  selector:
+    app: prijava-service
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8081
+  type: NodePort

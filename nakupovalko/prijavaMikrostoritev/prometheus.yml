@@ -1,0 +1,10 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'login-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['prijava-service:8081']
+
+

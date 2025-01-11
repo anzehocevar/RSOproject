@@ -1,0 +1,54 @@
+keycloak database:
+Create a Storage Account na  azure
+
+created storage account -> containers under data storage ->add container
+
+
+#install drivers
+helm repo add azureblob-csi-driver https://raw.githubusercontent.com/kubernetes-sigs/blob-csi-driver/master/charts
+helm repo update
+helm install blob-csi-driver azureblob-csi-driver/blob-csi-driver --namespace kube-system
+
+upload file -> js sm na roke to uploadala:
+na kubernetesu nrdis storage account (nakupovalkokeycloak) in znotraj tega container (keycloak-config) in tm je potem upload opcija
+
+azcli storage blob upload --account-name <your-storage-account> --container-name keycloak-config --name keycloak-config.json --file /path/to/your/keycloak-config.json
+azcli storage blob upload --account-name nakupovalkokeycloak --container-name keycloak-config --name keycloakdb.mv.db --file /home/veronika/faks/rso/RSOproject/nakupovalko/prijavaMikrostoritev/k8s/keycloak/keycloakdb.mv.db
+
+
+secret.yml:
+get storage key by running:
+az storage account keys list --resource-group <your-resource-group> --account-name <storage-name> --query "[0].value" -o tsv
+#azcli storage account keys list --resource-group nakupovalkoRS --account-name nakupovalkokeycloak --query "[0].value" -o tsv
+
+
+
+INGRESS:
+azcli aks approuting enable --resource-group nakupovalkoRS --name nakupovalkoCluster
+
+
+tls secret:
+install cert manager, ki zgenerira
+helm install cert-manager jetstack/cert-manager --namespace cert-manager --version v1.2.0 --set 'extraArgs={--dns01-recursive-nameservers=8.8.8.8:53\,1.1.1.1:53}' --create-namespace --set installCRDs=true
+kubectl get pods -n cert-manager //vsi morjo laufat (3 so)
+
+git clone https://github.com/ebrianne/cert-manager-webhook-duckdns.git
+cd cert-manager-webhook-duckdns
+
+helm install cert-manager-webhook-duckdns --namespace cert-manager --set duckdns.token='DUCKDNS_TOKEN' --set clusterIssuer.production.create=true --set clusterIssuer.staging.create=true --set clusterIssuer.email='YOUR_MAIL' --set logLevel=2 ./deploy/cert-manager-webhook-duckdns
+kubectl get pods -n cert-manager
+
+In ingress set cert-manager.io/cluster-issuer: cert-manager-webhook-duckdns-production
+curl https://nakupovalko.duckdns.org/users
+
+
+
+
+
+kubectl apply -f keycloakPVC.yml
+kubectl apply -f keycloakDeployment.yml
+kubectl apply -f secret.yml
+kubectl apply -f prijavaDeployment.yml
+kubectl apply -f ingress.yml
+
+
