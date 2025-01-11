@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: shoppinglist-ingress
+  namespace: nakupovalko
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: shoppinglist.local
+      http:
+        paths:
+          - path: /api/shopping-lists
+            pathType: Prefix
+            backend:
+              service:
+                name: shoppinglist
+                port:
+                  number: 8090

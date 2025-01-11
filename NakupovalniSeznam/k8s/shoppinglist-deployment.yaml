@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: shoppinglist
-  namespace: shoppinglist
+  namespace: nakupovalko
 spec:
   replicas: 3
   selector:
@@ -20,8 +20,7 @@ spec:
             - containerPort: 8090
           env:
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:mysql://mysql:3306/shopping_list_db
-
+              value: jdbc:mysql://shoppinglist-mysql:3306/shopping_list_db
             - name: SPRING_DATASOURCE_USERNAME
               value: root
             - name: SPRING_DATASOURCE_PASSWORD

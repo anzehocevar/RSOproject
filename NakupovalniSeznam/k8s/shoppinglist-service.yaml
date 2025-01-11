@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: shoppinglist
-  namespace: shoppinglist
+  namespace: nakupovalko
 spec:
   selector:
     app: shoppinglist
@@ -10,4 +10,4 @@ spec:
     - protocol: TCP
       port: 8090
       targetPort: 8090
-  type: LoadBalancer
+  type: ClusterIP
