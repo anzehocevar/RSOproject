@@ -1,16 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: grafana
+  name: item-grafana
+  namespace: nakupovalko
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: grafana
+      app: item-grafana
   template:
     metadata:
       labels:
-        app: grafana
+        app: item-grafana
     spec:
       containers:
         - name: grafana

@@ -2,8 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: item-service
+  namespace: nakupovalko
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: item-service
@@ -14,12 +15,12 @@ spec:
     spec:
       containers:
         - name: item-service
-          image: item-item-service:latest  # Replace with your Docker image
+          image: docker.io/hocevaran/item-service:latest
           ports:
             - containerPort: 8089
           env:
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:mysql://mysql:3306/itemdb
+              value: jdbc:mysql://item-mysql:3306/itemdb
             - name: SPRING_DATASOURCE_USERNAME
               value: root
             - name: SPRING_DATASOURCE_PASSWORD

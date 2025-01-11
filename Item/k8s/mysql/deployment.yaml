@@ -1,16 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mysql
+  name: item-mysql
+  namespace: nakupovalko
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mysql
+      app: item-mysql
   template:
     metadata:
       labels:
-        app: mysql
+        app: item-mysql
     spec:
       containers:
         - name: mysql
