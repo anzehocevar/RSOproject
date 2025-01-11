@@ -1,0 +1,54 @@
+azcli login
+azcli group create --name nakupovalkoRS --location westeurope
+azcli aks create --resource-group nakupovalkoRS --name nakupovalkoCluster --node-count 1 --enable-addons monitoring --generate-ssh-keys
+azcli aks get-credentials --resource-group nakupovalkoRS --name nakupovalkoCluster --file ~/.kube/config
+
+kubectl config use-context nakupovalkoCluster
+kubectl apply -f userDeployment.yml
+
+kubectl get pods
+kubectl get deployment
+kubectl get services
+
+kubectl describe deployment user-service
+
+kubectl logs user-service-5cff6dd5f8-pwnqx (you get this from get pods to get errors)
+
+
+DEPLOY EVERYTHING:
+kubectl create namespace nakupovalko
+
+kubectl apply -f elasticsearchDeployment.yml
+kubectl apply -f kibanaDeployment.yml
+kubectl apply -f logstashDeployment.yml
+kubectl apply -f prometheusDeployment.yml
+kubectl apply -f grafanaDeployment.yml
+kubectl apply -f mysqlDeployment.yml
+kubectl apply -f userDeployment.yml
+
+prever da dela lokalno: kubectl port-forward svc/elasticsearch 9200:9200 -n monitoring
+localhost:9200
+
+get public ip:  kubectl get svc user-service -n nakupovalko
+
+force redeployment: kubectl rollout restart deployment/user-service -n nakupovalko
+
+
+check database:
+mysql -h mysql -u myuser -pmypass userdb
+kubectl exec -it mysql-podnumber -n nakupovalko -- bash
+
+
+test grafana and prometheus:
+kubectl port-forward svc/prometheus -n nakupovalko 9090:9090
+kubectl port-forward svc/grafana -n nakupovalko 3000:3000
+http://localhost:3000/
+
+
+test logging:
+kubectl port-forward svc/elasticsearch -n nakupovalko 9200:9200
+http://localhost:9200
+
+kubectl port-forward svc/logstash -n nakupovalko 5044:5044
+kubectl port-forward svc/kibana -n nakupovalko 5601:5601
+http://localhost:5601
