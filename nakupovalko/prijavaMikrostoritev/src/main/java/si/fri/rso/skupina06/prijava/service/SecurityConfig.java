@@ -42,7 +42,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/nakupovalko-login", "/login.js", "/actuator", "/actuator/*").permitAll()
-                        .requestMatchers("/api/user-info", "/admin").authenticated()
+                        .requestMatchers("/auth/user-info", "/admin").authenticated()
                         .anyRequest().permitAll())
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter)));

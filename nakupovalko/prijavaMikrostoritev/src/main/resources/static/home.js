@@ -57,7 +57,7 @@ const home = Vue.createApp({
         },
 
         saveToken() {
-            fetch('https://nakupovalko.duckdns.org/api/set-token', {
+            fetch('https://nakupovalko.duckdns.org/auth/set-token', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
