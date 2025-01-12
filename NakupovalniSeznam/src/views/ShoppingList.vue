@@ -1,69 +1,71 @@
 <template>
-  <div>
-    <h1>Shopping List Manager</h1>
-
-    <!-- Shopping Lists -->
-    <div v-if="shoppingLists.length > 0">
-      <h2>All Shopping Lists</h2>
-      <ul>
-        <li v-for="list in shoppingLists" :key="list.id">
-          <h3>{{ list.name }}</h3>
-          <p><strong>Shopping List ID:</strong> {{ list.id }}</p>
-
-          <!-- Items in the Shopping List -->
-          <h4>Items:</h4>
-          <ul>
-            <li v-for="itemId in list.itemIds" :key="itemId">
-              Item ID: {{ itemId }}
-              <span v-if="list.boughtItems.includes(itemId)"> - Bought ✅</span>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-    <div v-else>
-      <p>No shopping lists available. Create one!</p>
+  <div class="shopping-list-container">
+    <h1>Shopping Lists</h1>
+    <div v-for="list in shoppingLists" :key="list.id" class="shopping-list-box">
+      <h2>{{ list.name }}</h2>
+      <p><strong>ID:</strong> {{ list.id }}</p>
+      <div>
+        <strong>Items:</strong>
+        <ul>
+          <li v-for="item in list.itemIds" :key="item">Item ID: {{ item }}</li>
+        </ul>
+      </div>
+      <div>
+        <strong>Bought Items:</strong>
+        <ul>
+          <li v-for="item in list.boughtItems" :key="item">Item ID: {{ item }}</li>
+        </ul>
+      </div>
+      <div>
+        <strong>Users:</strong>
+        <ul>
+          <li v-for="user in list.userIds" :key="user">User ID: {{ user }}</li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
   data() {
     return {
-      shoppingLists: [], // Holds the shopping lists fetched from the API
+      shoppingLists: [] // Fetch data from API on mount
     };
   },
   methods: {
-    // Fetch shopping lists from the backend API
     async fetchShoppingLists() {
       try {
-        const response = await axios.get('/api/shopping-lists');
-        this.shoppingLists = response.data;
+        const response = await fetch('/api/shopping-lists');
+        if (!response.ok) throw new Error('Failed to fetch shopping lists');
+        this.shoppingLists = await response.json();
       } catch (error) {
-        console.error('Error fetching shopping lists:', error);
+        console.error(error);
       }
     },
   },
   mounted() {
-    // Fetch data when the component is mounted
     this.fetchShoppingLists();
   },
 };
 </script>
 
 <style>
-/* Styles for better readability */
-h1, h2 {
-  color: #2c3e50;
+.shopping-list-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
+
+.shopping-list-box {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-li {
-  margin-bottom: 10px;
+
+.shopping-list-box h2 {
+  margin-top: 0;
 }
 </style>
