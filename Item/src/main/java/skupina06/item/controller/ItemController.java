@@ -13,7 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/items")
+@RequestMapping("/api/items")
 @Tag(name = "Item Controller", description = "REST API for managing items")
 public class ItemController {
 

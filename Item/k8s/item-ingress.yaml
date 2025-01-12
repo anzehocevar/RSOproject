@@ -11,13 +11,20 @@ spec:
 #    - host: <external-domain-or-ip> # Replace with your external IP or domain
      - http:
         paths:
-          - path: /items
+          - path: /api/items
             pathType: Prefix
             backend:
               service:
                 name: item-service
                 port:
                   number: 8089
+          - path: /items
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-items
+                port:
+                  number: 80
 #          - path: /prometheus(/|$)(.*)
 #            pathType: Prefix
 #            backend:
