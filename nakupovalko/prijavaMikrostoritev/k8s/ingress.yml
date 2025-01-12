@@ -13,13 +13,14 @@ spec:
       http:
         paths:
           # Keycloak
-          - path: /realms
+          - path: /(realms|resources)
             pathType: Prefix
             backend:
               service:
                 name: keycloak
                 port:
                   number: 8080
+
 
           # Prijava service
           - path: /nakupovalko-login
@@ -29,7 +30,7 @@ spec:
                 name: prijava-service
                 port:
                   number: 8081
-          - path: /(home|admin|api)
+          - path: /(home|admin|auth)
             pathType: Prefix
             backend:
               service:
@@ -59,6 +60,20 @@ spec:
                 name: user-service
                 port:
                   number: 8082
+          - path: /api/shopping-lists
+            pathType: Prefix
+            backend:
+              service:
+                name: shoppinglist
+                port:
+                  number: 8090
+          - path: /
+            pathType: Exact
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
 
   tls:
     - hosts:
