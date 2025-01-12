@@ -5,7 +5,7 @@ const home = Vue.createApp({
             alert('Redirecting to profile')
         },
         goSeznam() {
-            window.location.href = 'https://nakupovalko.duckdns.org/profile'; // TODO: hočo nej da link
+            window.location.href = 'http://20.31.172.254/';
             alert('Redirecting to seznam')
         },
         logout() {

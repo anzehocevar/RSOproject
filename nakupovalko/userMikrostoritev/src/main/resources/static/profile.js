@@ -15,7 +15,6 @@ const app = Vue.createApp({
             alert('Redirecting to home')
         },
         logout() {
-            window.location.href = "/auth/realms/nakupovalko/protocol/openid-connect/logout";
             alert('Logging user out');
         },
 
