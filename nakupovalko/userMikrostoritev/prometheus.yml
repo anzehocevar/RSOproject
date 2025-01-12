@@ -9,4 +9,4 @@ scrape_configs:
 
   - job_name: 'mysql'
     static_configs:
-      - targets: ['mysql:3306']
+      - targets: ['mysql:8083']

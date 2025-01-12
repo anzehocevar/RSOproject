@@ -25,20 +25,20 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mysql
+  name: mysql-user
   namespace: nakupovalko
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mysql
+      app: mysql-user
   template:
     metadata:
       labels:
-        app: mysql
+        app: mysql-user
     spec:
       containers:
-        - name: mysql
+        - name: mysql-user
           image: mysql:8.0
           env:
             - name: MYSQL_ROOT_PASSWORD
@@ -67,11 +67,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql
+  name: mysql-user
   namespace: nakupovalko
 spec:
   selector:
-    app: mysql
+    app: mysql-user
   ports:
     - protocol: TCP
       port: 3306
