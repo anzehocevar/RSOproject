@@ -3,32 +3,32 @@ kind: Ingress
 metadata:
   name: item-ingress
   namespace: nakupovalko
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
+#  annotations:
+#    nginx.ingress.kubernetes.io/rewrite-target: /$1
 spec:
   ingressClassName: nginx
   rules:
-    - host: <external-domain-or-ip> # Replace with your external IP or domain
-      http:
+#    - host: <external-domain-or-ip> # Replace with your external IP or domain
+     - http:
         paths:
-          - path: /api/item-service(/|$)(.*)
+          - path: /items
             pathType: Prefix
             backend:
               service:
                 name: item-service
                 port:
                   number: 8089
-          - path: /prometheus(/|$)(.*)
-            pathType: Prefix
-            backend:
-              service:
-                name: item-prometheus
-                port:
-                  number: 9090
-          - path: /grafana(/|$)(.*)
-            pathType: Prefix
-            backend:
-              service:
-                name: item-grafana
-                port:
-                  number: 3000
+#          - path: /prometheus(/|$)(.*)
+#            pathType: Prefix
+#            backend:
+#              service:
+#                name: item-prometheus
+#                port:
+#                  number: 9090
+#          - path: /grafana(/|$)(.*)
+#            pathType: Prefix
+#            backend:
+#              service:
+#                name: item-grafana
+#                port:
+#                  number: 3000

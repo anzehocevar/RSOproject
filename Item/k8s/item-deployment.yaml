@@ -25,5 +25,23 @@ spec:
               value: root
             - name: SPRING_DATASOURCE_PASSWORD
               value: mysql
-            - name: MANAGEMENT.ENDPOINTS.WEB.EXPOSURE.INCLUDE
-              value: prometheus
+#            - name: MANAGEMENT.ENDPOINTS.WEB.EXPOSURE.INCLUDE
+#              value: prometheus
+      imagePullSecrets:
+        - name: registry-secret
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: item-service
+  namespace: nakupovalko
+spec:
+  selector:
+    app: item-service
+  ports:
+    - protocol: TCP
+      port: 8089
+      targetPort: 8089
+  type: ClusterIP

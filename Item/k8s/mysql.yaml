@@ -1,0 +1,83 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: item-mysql-initdb-config
+  namespace: nakupovalko
+  labels:
+    app: item-mysql
+  annotations:
+    description: "Contains MySQL initialization scripts."
+data:
+  init.sql: |
+    -- Create the Item table
+    CREATE TABLE IF NOT EXISTS item (
+                                        id INT AUTO_INCREMENT PRIMARY KEY,
+                                        name VARCHAR(255) NOT NULL,
+        description TEXT,
+        price DOUBLE NOT NULL
+        );
+
+    -- Insert initial data into the Item table
+    INSERT INTO item (name, description, price) VALUES
+                                                    ('Item1', 'Description of Item1', 9.99),
+                                                    ('Item2', 'Description of Item2', 19.99),
+                                                    ('Item3', 'Description of Item3', 29.99);
+
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: item-mysql
+  namespace: nakupovalko
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: item-mysql
+  template:
+    metadata:
+      labels:
+        app: item-mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: mysql
+            - name: MYSQL_DATABASE
+              value: itemdb
+            - name: MYSQL_PASSWORD
+              value: mysql
+
+          volumeMounts:
+            - name: item-mysql-data
+              mountPath: /var/lib/mysql
+            - name: item-mysql-initdb-config
+              mountPath: /docker-entrypoint-initdb.d
+
+
+      volumes:
+        - name: item-mysql-data
+          emptyDir: { }
+        - name: item-mysql-initdb-config
+          configMap:
+            name: item-mysql-initdb-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: item-mysql
+  namespace: nakupovalko
+spec:
+  selector:
+    app: item-mysql
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+#  type: LoadBalancer
