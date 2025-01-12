@@ -12,7 +12,7 @@
       <div v-for="item in items" :key="item.id" class="item-card">
         <h2>{{ item.name }}</h2>
         <p><strong>Description:</strong> {{ item.description }}</p>
-        <p><strong>Price:</strong> ${{ item.price.toFixed(2) }}</p>
+<!--        <p><strong>Price:</strong> ${{ item.price.toFixed(2) }}</p>-->
       </div>
     </div>
   </div>

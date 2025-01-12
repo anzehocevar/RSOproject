@@ -10,7 +10,7 @@ metadata:
 data:
   init.sql: |
     -- Create the Item table
-    CREATE TABLE IF NOT EXISTS Item (
+    CREATE TABLE IF NOT EXISTS item (
                                         id INT AUTO_INCREMENT PRIMARY KEY,
                                         name VARCHAR(255) NOT NULL,
         description TEXT,
@@ -18,7 +18,7 @@ data:
         );
 
     -- Insert initial data into the Item table
-    INSERT INTO Item (name, description, price) VALUES
+    INSERT INTO item (name, description, price) VALUES
                                                     ('Item1', 'Description of Item1', 9.99),
                                                     ('Item2', 'Description of Item2', 19.99),
                                                     ('Item3', 'Description of Item3', 29.99);

@@ -1,8 +1,9 @@
 module.exports = {
+    publicPath: '/items',
     devServer: {
         proxy: {
-            '/items': {
-                target: 'http://item-service:8089', // Kubernetes service name for backend
+            '/api': {
+                target: 'http://item-service:8089',
                 changeOrigin: true,
             },
         },
