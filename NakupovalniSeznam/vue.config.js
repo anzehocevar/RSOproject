@@ -2,7 +2,7 @@ module.exports = {
     devServer: {
         proxy: {
             '/api': {
-                target: 'http://shoppinglist:8090', // Kubernetes service name for backend
+                target: 'http://localhost:8090', // Kubernetes service name for backend
                 changeOrigin: true,
             },
         },

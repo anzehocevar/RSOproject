@@ -1,65 +1,17 @@
 <template>
   <div class="user-shopping-lists-container">
-    <h1>Your Shopping Lists</h1>
+    <div class="split-screen">
+      <!-- Left Section: Shopping Lists -->
+      <div class="left-section">
+        <h1>Your Shopping Lists</h1>
 
-    <!-- Add New Shopping List -->
-    <div class="add-shopping-list">
-      <h2>Add New Shopping List</h2>
-      <div class="box">
-        <form @submit.prevent="addShoppingList">
-          <div class="form-group">
-            <input
-                v-model="newList.name"
-                type="text"
-                class="form-input"
-                placeholder="List Name"
-                required
-            />
-          </div>
-          <div class="form-group">
-            <textarea
-                v-model="newList.items"
-                class="form-textarea"
-                placeholder="Comma-separated item IDs (optional)"
-            ></textarea>
-          </div>
-          <button type="submit" class="btn btn-primary">Add List</button>
-        </form>
-      </div>
-    </div>
-
-    <!-- Shopping Lists -->
-    <div v-if="loading" class="loading">Loading...</div>
-    <div v-else-if="shoppingLists.length === 0" class="no-lists">No shopping lists found.</div>
-    <div v-else>
-      <div v-for="list in shoppingLists" :key="list.id" class="shopping-list-box box">
-        <h2>{{ list.name }}</h2>
-        <p><strong>ID:</strong> {{ list.id }}</p>
-        <div>
-          <strong>Items:</strong>
-          <ul>
-            <li v-for="item in list.itemIds" :key="item">Item ID: {{ item }}</li>
-          </ul>
-        </div>
-        <div>
-          <strong>Bought Items:</strong>
-          <ul>
-            <li v-for="item in list.boughtItems" :key="item">Item ID: {{ item }}</li>
-          </ul>
-        </div>
-        <div>
-          <strong>Users:</strong>
-          <ul>
-            <li v-for="user in list.userIds" :key="user">User ID: {{ user }}</li>
-          </ul>
-        </div>
-        <!-- Edit Shopping List -->
-        <button @click="startEditing(list)" class="btn btn-secondary">Edit</button>
-        <div v-if="editingList && editingList.id === list.id" class="edit-box">
-          <form @submit.prevent="saveShoppingList">
+        <!-- Add New Shopping List -->
+        <div class="add-shopping-list box">
+          <h2>Add New Shopping List</h2>
+          <form @submit.prevent="addShoppingList">
             <div class="form-group">
               <input
-                  v-model="editingList.name"
+                  v-model="newList.name"
                   type="text"
                   class="form-input"
                   placeholder="List Name"
@@ -68,21 +20,71 @@
             </div>
             <div class="form-group">
               <textarea
-                  v-model="editingList.items"
+                  v-model="newList.items"
                   class="form-textarea"
-                  placeholder="Comma-separated item IDs"
+                  placeholder="Comma-separated item IDs (optional)"
               ></textarea>
             </div>
             <div class="form-group">
               <textarea
-                  v-model="editingList.users"
+                  v-model="newList.boughtItems"
                   class="form-textarea"
-                  placeholder="Comma-separated user IDs"
+                  placeholder="Comma-separated bought item IDs (optional)"
               ></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Save</button>
-            <button @click="cancelEditing" class="btn btn-danger">Cancel</button>
+            <button type="submit" class="btn btn-primary">Add List</button>
           </form>
+        </div>
+
+        <!-- Shopping Lists -->
+        <div v-if="loading" class="loading">Loading...</div>
+        <div v-else-if="shoppingLists && shoppingLists.length === 0" class="no-lists">No shopping lists found.</div>
+        <div v-else>
+          <div
+              v-for="list in shoppingLists"
+              :key="list.id"
+              class="shopping-list-box box"
+          >
+            <h2>{{ list.name }}</h2>
+            <p><strong>ID:</strong> {{ list.id }}</p>
+            <div>
+              <strong>Items:</strong>
+              <ul>
+                <li v-for="item in list.itemIds || []" :key="item">Item ID: {{ item }}</li>
+              </ul>
+            </div>
+            <div>
+              <strong>Bought Items:</strong>
+              <ul>
+                <li v-for="item in list.boughtItems || []" :key="item">Item ID: {{ item }}</li>
+              </ul>
+            </div>
+            <div>
+              <strong>Users:</strong>
+              <ul>
+                <li v-for="user in list.userIds || []" :key="user">User ID: {{ user }}</li>
+              </ul>
+            </div>
+            <!-- Edit and Delete Buttons -->
+            <div class="buttons">
+              <button @click="startEditing(list)" class="btn btn-secondary">Edit</button>
+              <button @click="deleteShoppingList(list.id)" class="btn btn-danger">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Section: Items -->
+      <div class="right-section">
+        <h1>Available Items</h1>
+        <div v-if="loadingItems" class="loading">Loading...</div>
+        <div v-else-if="items.length === 0" class="no-items">No items available.</div>
+        <div v-else>
+          <div v-for="item in items" :key="item.id" class="item-box box">
+            <h2>{{ item.name }}</h2>
+            <p><strong>Description:</strong> {{ item.description }}</p>
+            <p><strong>Price:</strong> ${{ item.price.toFixed(2) }}</p>
+          </div>
         </div>
       </div>
     </div>
@@ -90,29 +92,27 @@
 </template>
 
 <script>
-import jwtDecode from 'jwt-decode';
-
 export default {
   data() {
     return {
       shoppingLists: [],
+      items: [],
       loading: true,
+      loadingItems: true,
       newList: {
         name: '',
-        items: ''
+        items: '',
+        boughtItems: '',
       },
-      editingList: null
+      editingList: null,
     };
   },
   methods: {
     async fetchUserShoppingLists() {
       try {
-        // const token = localStorage.getItem('authToken'); // Assuming the token is stored in localStorage
-        // const decodedToken = jwtDecode(token);
-        const userId = 201; // Replace with the actual logic for fetching userId
-
+        const userId = 201; // Replace with actual user ID logic
         const response = await fetch(`/api/shopping-lists/user/${userId}`);
-        if (!response.ok) throw new Error('Failed to fetch user shopping lists for' + userId);
+        if (!response.ok) throw new Error('Failed to fetch shopping lists');
         this.shoppingLists = await response.json();
       } catch (error) {
         console.error(error);
@@ -120,142 +120,78 @@ export default {
         this.loading = false;
       }
     },
-    async addShoppingList() {
+    async fetchItems() {
       try {
-        // Replace with actual logic for fetching the userId
-        const userId = 201;
-
-        // Correct endpoint for creating a new shopping list
-        const response = await fetch('/api/shopping-lists', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: this.newList.name,
-            itemIds: this.newList.items
-                ? this.newList.items.split(',').map(Number)
-                : [],
-            userIds: [userId] // Optionally associate the shopping list with the user
-          })
-        });
-
+        const response = await fetch('http://20.31.172.254/api/items');
         if (!response.ok) {
-          const errorText = await response.text(); // Get error details if any
-          throw new Error(`Failed to add shopping list: ${errorText}`);
+          throw new Error(`Failed to fetch items: ${response.statusText}`);
         }
-
-        const newList = await response.json();
-        this.shoppingLists.push(newList);
-
-        // Reset input fields after successful addition
-        this.newList.name = '';
-        this.newList.items = '';
+        const data = await response.json();
+        console.log('Fetched items:', data); // Debug log
+        this.items = data;
       } catch (error) {
-        console.error('Error adding shopping list:', error.message);
+        console.error('Error fetching items:', error.message);
+      } finally {
+        this.loadingItems = false;
       }
     },
-    startEditing(list) {
-      this.editingList = {
-        ...list,
-        items: list.itemIds.join(','),
-        users: list.userIds.join(',')
-      };
-    },
-    cancelEditing() {
-      this.editingList = null;
-    },
-    async saveShoppingList() {
-      try {
-        // @PutMapping("/{shoppingListId}")
-        const response = await fetch(`/api/shopping-lists/${this.editingList.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: this.editingList.name,
-            itemIds: this.editingList.items
-                ? this.editingList.items.split(',').map(Number)
-                : [],
-            userIds: this.editingList.users
-                ? this.editingList.users.split(',').map(Number)
-                : []
-          })
-        });
-        if (!response.ok) throw new Error('Failed to update shopping list');
-        const updatedList = await response.json();
-        const index = this.shoppingLists.findIndex((list) => list.id === updatedList.id);
-        if (index !== -1) this.shoppingLists.splice(index, 1, updatedList);
-        this.editingList = null;
-      } catch (error) {
-        console.error(error);
-      }
-    }
   },
   mounted() {
     this.fetchUserShoppingLists();
-  }
+    this.fetchItems();
+  },
 };
 </script>
 
 <style>
+/* Split-Screen Layout */
+.split-screen {
+  display: flex;
+  gap: 20px;
+}
+
+.left-section,
+.right-section {
+  width: 50%;
+}
+
 .user-shopping-lists-container {
   padding: 20px;
   font-family: Arial, sans-serif;
 }
 
-.box {
-  border: 1px solid #ccc;
+.add-shopping-list {
+  margin-bottom: 20px;
+  padding: 20px;
+  border: 2px solid #007bff;
   border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 16px;
   background-color: #f9f9f9;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.shopping-list-box h2 {
-  margin-top: 0;
-}
-
-.form-group {
-  margin-bottom: 10px;
-}
-
-.form-input,
-.form-textarea {
-  width: 100%;
-  padding: 8px;
-  margin-top: 5px;
+.shopping-list-box,
+.item-box {
+  margin-bottom: 16px;
+  padding: 16px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-textarea.form-textarea {
-  height: 80px;
+h1 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
 }
 
-.btn {
-  display: inline-block;
-  padding: 8px 16px;
-  margin-right: 5px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+.loading {
+  font-size: 1.2rem;
+  color: #6c757d;
 }
 
-.btn-primary {
-  background-color: #007bff;
-  color: #fff;
-}
-
-.btn-secondary {
-  background-color: #6c757d;
-  color: #fff;
-}
-
-.btn-danger {
-  background-color: #dc3545;
-  color: #fff;
-}
-
-.btn:hover {
-  opacity: 0.9;
+.no-lists,
+.no-items {
+  font-size: 1.2rem;
+  color: #dc3545;
 }
 </style>

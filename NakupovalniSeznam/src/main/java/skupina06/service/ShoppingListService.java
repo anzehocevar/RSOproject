@@ -8,6 +8,7 @@ import skupina06.repository.ShoppingListRepository;
 
 import java.util.stream.Collectors;
 import java.util.List;
+import java.util.ArrayList;
 
 @Service
 public class ShoppingListService {
@@ -23,10 +24,44 @@ public class ShoppingListService {
         this.restTemplate = restTemplate;
     }
 
-    // Create a new shopping list
     public ShoppingList createShoppingList(ShoppingList shoppingList) {
-        return shoppingListRepository.save(shoppingList);
+        // Save the parent shopping list first
+        ShoppingList savedShoppingList = shoppingListRepository.save(shoppingList);
+
+        // Ensure the collections are not null
+        if (savedShoppingList.getItemIds() == null) {
+            savedShoppingList.setItemIds(new ArrayList<>());
+        }
+        if (savedShoppingList.getBoughtItems() == null) {
+            savedShoppingList.setBoughtItems(new ArrayList<>());
+        }
+        if (savedShoppingList.getUserIds() == null) {
+            savedShoppingList.setUserIds(new ArrayList<>());
+        }
+
+        // Manually update userIds after saving the parent
+        List<Long> validUserIds = new ArrayList<>(shoppingList.getUserIds());
+        savedShoppingList.setUserIds(validUserIds);
+
+        // Save the updated shopping list with userIds
+        return shoppingListRepository.save(savedShoppingList);
     }
+
+
+//    public ShoppingList createShoppingList(ShoppingList shoppingList) {
+//        shoppingList.setName(shoppingList.getName());
+//        if (shoppingList.getItemIds() == null) {
+//            shoppingList.setItemIds(new ArrayList<>());
+//        }
+//        if (shoppingList.getBoughtItems() == null) {
+//            shoppingList.setBoughtItems(new ArrayList<>());
+//        }
+//        if (shoppingList.getUserIds() == null) {
+//            shoppingList.setUserIds(new ArrayList<>());
+//        }
+//        return shoppingListRepository.save(shoppingList);
+//    }
+
 
     // Retrieve all shopping lists
     public List<ShoppingList> getAllShoppingLists() {
@@ -137,6 +172,10 @@ public class ShoppingListService {
         }
         if (updatedShoppingList.getUserIds() != null) {
             existing.setUserIds(updatedShoppingList.getUserIds());
+        }
+
+        if(updatedShoppingList.getBoughtItems() != null) {
+            existing.setBoughtItems(updatedShoppingList.getBoughtItems());
         }
 
         // Save updated shopping list

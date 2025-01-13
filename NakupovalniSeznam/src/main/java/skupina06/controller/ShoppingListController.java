@@ -1,5 +1,6 @@
 package skupina06.controller;
 
+import org.springframework.http.HttpStatus;
 import skupina06.model.ShoppingList;
 import skupina06.service.ShoppingListService;
 import org.springframework.http.ResponseEntity;
