@@ -70,20 +70,92 @@
               <button @click="startEditing(list)" class="btn btn-secondary">Edit</button>
               <button @click="deleteShoppingList(list.id)" class="btn btn-danger">Delete</button>
             </div>
+            <!-- Edit Shopping List -->
+            <div v-if="editingList && editingList.id === list.id" class="edit-box">
+              <form @submit.prevent="saveShoppingList">
+                <div class="form-group">
+                  <input
+                      v-model="editingList.name"
+                      type="text"
+                      class="form-input"
+                      placeholder="List Name"
+                      required
+                  />
+                </div>
+                <div class="form-group">
+              <textarea
+                  v-model="editingList.items"
+                  class="form-textarea"
+                  placeholder="Comma-separated item IDs"
+              ></textarea>
+                </div>
+                <div class="form-group">
+              <textarea
+                  v-model="editingList.boughtItems"
+                  class="form-textarea"
+                  placeholder="Comma-separated bought item IDs"
+              ></textarea>
+                </div>
+                <div class="form-group">
+              <textarea
+                  v-model="editingList.users"
+                  class="form-textarea"
+                  placeholder="Comma-separated user IDs"
+              ></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+                <button @click="cancelEditing" class="btn btn-danger">Cancel</button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
-
-      <!-- Right Section: Items -->
+      <!-- Add New Item Section -->
       <div class="right-section">
-        <h1>Available Items</h1>
+      <h1>Items</h1>
+        <div class="add-item-box box">
+          <h2>Add New Item</h2>
+          <form @submit.prevent="addItem">
+            <div class="form-group">
+              <input
+                  v-model="newItem.name"
+                  type="text"
+                  class="form-input"
+                  placeholder="Item Name"
+                  required
+              />
+            </div>
+            <div class="form-group">
+          <textarea
+              v-model="newItem.description"
+              class="form-textarea"
+              placeholder="Item Description"
+          ></textarea>
+            </div>
+            <div class="form-group">
+              <input
+                  v-model="newItem.price"
+                  type="number"
+                  class="form-input"
+                  placeholder="Price"
+                  required
+              />
+            </div>
+            <button type="submit" class="btn btn-primary">Add Item</button>
+          </form>
+        </div>
         <div v-if="loadingItems" class="loading">Loading...</div>
         <div v-else-if="items.length === 0" class="no-items">No items available.</div>
         <div v-else>
           <div v-for="item in items" :key="item.id" class="item-box box">
-            <h2>{{ item.name }}</h2>
+            <h2>{{ item.name }} (ID: {{ item.id }})</h2>
             <p><strong>Description:</strong> {{ item.description }}</p>
             <p><strong>Price:</strong> ${{ item.price.toFixed(2) }}</p>
+            <!-- Buttons for managing items -->
+            <div class="buttons">
+              <button @click="editItem(item)" class="btn btn-secondary">Edit</button>
+              <button @click="deleteItem(item.id)" class="btn btn-danger">Remove</button>
+            </div>
           </div>
         </div>
       </div>
@@ -104,7 +176,12 @@ export default {
         items: '',
         boughtItems: '',
       },
-      editingList: null,
+      newItem: {
+        name: '',
+        description: '',
+        price: null,
+      },
+      editingItem: null, // To track the item being edited
     };
   },
   methods: {
@@ -120,6 +197,111 @@ export default {
         this.loading = false;
       }
     },
+    async deleteShoppingList(listId) {
+      try {
+        console.log('Deleting shopping list with ID:', listId);
+        const response = await fetch(`/api/shopping-lists/${listId}`, {
+          method: 'DELETE',
+        });
+        if (!response.ok) {
+          const error = await response.text();
+          throw new Error(`Failed to delete shopping list: ${error}`);
+        }
+        // Update local state
+        this.shoppingLists = this.shoppingLists.filter((list) => list.id !== listId);
+        console.log('Shopping list deleted successfully');
+      } catch (error) {
+        console.error('Error deleting shopping list:', error.message);
+      }
+    },
+    startEditing(list) {
+      console.log('Editing shopping list:', list);
+      this.editingList = {
+        ...list,
+        items: (list.itemIds || []).join(','), // Convert `itemIds` to a comma-separated string
+        boughtItems: (list.boughtItems || []).join(','), // Convert `boughtItems` to a string
+        userIds: (list.userIds || []).join(','), // Convert `userIds` to a string
+      };
+    },
+    cancelEditing() {
+      console.log('Cancelled editing');
+      this.editingList = null;
+    },
+    async saveShoppingList() {
+      try {
+        console.log('Saving shopping list:', this.editingList);
+        const response = await fetch(`/api/shopping-lists/${this.editingList.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: this.editingList.name,
+            itemIds: this.editingList.items
+                ? this.editingList.items.split(',').map((id) => parseInt(id.trim()))
+                : [],
+            boughtItems: this.editingList.boughtItems
+                ? this.editingList.boughtItems.split(',').map((id) => parseInt(id.trim()))
+                : [],
+            userIds: this.editingList.userIds
+                ? this.editingList.userIds.split(',').map((id) => parseInt(id.trim()))
+                : [],
+          }),
+        });
+
+        if (!response.ok) {
+          const error = await response.text();
+          throw new Error(`Failed to update shopping list: ${error}`);
+        }
+
+        const updatedList = await response.json();
+        console.log('Shopping list updated successfully:', updatedList);
+
+        // Update the list in the UI
+        const index = this.shoppingLists.findIndex((list) => list.id === updatedList.id);
+        if (index !== -1) {
+          this.shoppingLists.splice(index, 1, updatedList);
+        }
+
+        // Exit edit mode
+        this.editingList = null;
+      } catch (error) {
+        console.error('Error saving shopping list:', error.message);
+      }
+    },
+    async addShoppingList() {
+      try {
+        console.log('Submitting new list:', this.newList);
+        const userId = 201; // Replace with actual user ID logic
+        const response = await fetch('/api/shopping-lists', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: this.newList.name,
+            itemIds: this.newList.items
+                ? this.newList.items.split(',').map(Number)
+                : [],
+            boughtItems: this.newList.boughtItems
+                ? this.newList.boughtItems.split(',').map(Number)
+                : [],
+            userIds: [userId],
+          }),
+        });
+
+        if (!response.ok) {
+          const error = await response.text();
+          throw new Error(`Failed to add list: ${error}`);
+        }
+
+        const newList = await response.json();
+        console.log('List added successfully:', newList);
+        this.shoppingLists.push(newList);
+
+        // Reset the form fields
+        this.newList = { name: '', items: '', boughtItems: '' };
+      } catch (error) {
+        console.error('Error adding shopping list:', error.message);
+      }
+    },
+
     async fetchItems() {
       try {
         const response = await fetch('http://20.31.172.254/api/items');
@@ -127,13 +309,44 @@ export default {
           throw new Error(`Failed to fetch items: ${response.statusText}`);
         }
         const data = await response.json();
-        console.log('Fetched items:', data); // Debug log
+        console.log('Fetched items:', data);
         this.items = data;
       } catch (error) {
         console.error('Error fetching items:', error.message);
       } finally {
         this.loadingItems = false;
       }
+    },
+    async addItem() {
+      try {
+        const response = await fetch('http://20.31.172.254/api/items', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(this.newItem),
+        });
+        if (!response.ok) throw new Error('Failed to add item');
+        const addedItem = await response.json();
+        this.items.push(addedItem);
+        // Reset new item fields
+        this.newItem = { name: '', description: '', price: null };
+      } catch (error) {
+        console.error('Error adding item:', error.message);
+      }
+    },
+    async deleteItem(itemId) {
+      try {
+        const response = await fetch(`http://20.31.172.254/api/items/${itemId}`, {
+          method: 'DELETE',
+        });
+        if (!response.ok) throw new Error('Failed to delete item');
+        // Remove item from the local list
+        this.items = this.items.filter((item) => item.id !== itemId);
+      } catch (error) {
+        console.error('Error deleting item:', error.message);
+      }
+    },
+    editItem(item) {
+      this.editingItem = { ...item }; // Create a copy of the item being edited
     },
   },
   mounted() {
@@ -193,5 +406,24 @@ h1 {
 .no-items {
   font-size: 1.2rem;
   color: #dc3545;
+}
+
+.add-item-box {
+  margin-top: 20px;
+  padding: 20px;
+  border: 2px solid #28a745;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.add-item-box h2 {
+  color: #28a745;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
 }
 </style>
