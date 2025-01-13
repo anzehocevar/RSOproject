@@ -123,4 +123,31 @@ public class ShoppingListService {
                 .filter(shoppingList -> shoppingList.getUserIds().contains(userId))
                 .collect(Collectors.toList());
     }
+
+    public ShoppingList updateShoppingList(Long id, ShoppingList updatedShoppingList) {
+        ShoppingList existing = shoppingListRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Shopping list not found with ID: " + id));
+
+        // Update fields
+        if (updatedShoppingList.getName() != null) {
+            existing.setName(updatedShoppingList.getName());
+        }
+        if (updatedShoppingList.getItemIds() != null) {
+            existing.setItemIds(updatedShoppingList.getItemIds());
+        }
+        if (updatedShoppingList.getUserIds() != null) {
+            existing.setUserIds(updatedShoppingList.getUserIds());
+        }
+
+        // Save updated shopping list
+        return shoppingListRepository.save(existing);
+    }
+
+
+    public ShoppingList updateItemsInShoppingList(Long shoppingListId, List<Long> itemIds) {
+        ShoppingList shoppingList = getShoppingListById(shoppingListId);
+        shoppingList.setItemIds(itemIds);
+        return shoppingListRepository.save(shoppingList);
+    }
+
 }

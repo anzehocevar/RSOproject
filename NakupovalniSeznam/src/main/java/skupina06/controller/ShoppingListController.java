@@ -120,4 +120,22 @@ public class ShoppingListController {
         ShoppingList updated = shoppingListService.removeUserFromShoppingList(shoppingListId, userId);
         return ResponseEntity.ok(updated);
     }
+
+    @PutMapping("/{shoppingListId}")
+    @Operation(summary = "Update a shopping list", description = "Updates the name, items, and users of a shopping list.")
+    public ResponseEntity<ShoppingList> updateShoppingList(
+            @PathVariable Long shoppingListId,
+            @RequestBody ShoppingList updatedShoppingList) {
+        ShoppingList updated = shoppingListService.updateShoppingList(shoppingListId, updatedShoppingList);
+        return ResponseEntity.ok(updated);
+    }
+
+    @PutMapping("/{shoppingListId}/update-items")
+    @Operation(summary = "Update items in a shopping list", description = "Updates the items in an existing shopping list.")
+    public ResponseEntity<ShoppingList> updateItemsInShoppingList(
+            @PathVariable Long shoppingListId,
+            @RequestBody List<Long> itemIds) {
+        ShoppingList updated = shoppingListService.updateItemsInShoppingList(shoppingListId, itemIds);
+        return ResponseEntity.ok(updated);
+    }
 }

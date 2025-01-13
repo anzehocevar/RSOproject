@@ -5,6 +5,7 @@
       <ul>
         <li><router-link to="/">Home</router-link></li>
         <li><router-link to="/user-shopping-lists">My Shopping Lists</router-link></li>
+        <li><a href="/api/items">Items</a></li> <!-- Direct external link -->
       </ul>
     </nav>
     <!-- Main Content -->
@@ -15,9 +16,13 @@
 <script>
 export default {
   name: 'App',
+  methods: {
+    redirectToItems() {
+      window.location.href = '/api/items';
+    },
+  },
 };
 </script>
-
 <style>
 /* Optional global styles */
 body {
