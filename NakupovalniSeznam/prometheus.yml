@@ -1,0 +1,13 @@
+global:
+  scrape_interval: 15s # Default scrape interval
+  evaluation_interval: 15s # Default evaluation interval
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['prometheus:9090'] # Prometheus monitoring itself
+
+  - job_name: 'shopping-list-service'
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ['shopping-list-service:8090']

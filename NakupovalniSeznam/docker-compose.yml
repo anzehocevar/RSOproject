@@ -1,0 +1,107 @@
+services:
+  mysql:
+    container_name: mysql_shopping_list
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: shopping_list_db
+    ports:
+      - "3308:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app
+
+  shopping-list-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8090:8090"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/shopping_list_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: mysql
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+      SPRING_APPLICATION_NAME: ShoppingList
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - app
+    volumes:
+      - logs_data:/logs
+    restart: on-failure
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.2
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    networks:
+      - app
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.10.2
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+#      - ELASTICSEARCH_SSL_VERIFICATIONMODE=none
+#      - XPACK_FLEET.ENABLED=true
+#      - ELASTICSEARCH_SERVICE_TOKEN=AAEAAWVsYXN0aWMva2liYW5hL2RlZmF1bHQ6NzdDTE8tOGtUSjZrcjF0T2hKWkw2UQ
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      - app
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.10.2
+    container_name: filebeat
+    volumes:
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - logs_data:/logs
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+#      - ELASTICSEARCH_SERVICE_TOKEN=AAEAAWVsYXN0aWMva2liYW5hL2RlZmF1bHQ6NzdDTE8tOGtUSjZrcjF0T2hKWkw2UQ
+    depends_on:
+      - elasticsearch
+    networks:
+      - app
+
+volumes:
+  mysql_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./mysql_data
+      o: bind
+  es_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./es_data
+      o: bind
+  logs_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./logs_data
+      o: bind
+
+networks:
+  app:

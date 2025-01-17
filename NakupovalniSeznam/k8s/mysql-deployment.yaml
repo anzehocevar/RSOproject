@@ -1,0 +1,96 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-initdb-config
+  namespace: nakupovalko
+  labels:
+    app: shoppinglist-mysql
+  annotations:
+    description: "Contains MySQL initialization scripts."
+data:
+    init.sql: |
+      CREATE TABLE IF NOT EXISTS shopping_lists (
+                                                   id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                                   name VARCHAR(255) NOT NULL
+          );
+  
+      CREATE TABLE IF NOT EXISTS shopping_list_items (
+                                                         shopping_list_id BIGINT NOT NULL,
+                                                         item_id BIGINT NOT NULL,
+                                                         FOREIGN KEY (shopping_list_id) REFERENCES shopping_lists(id)
+          );
+  
+      CREATE TABLE IF NOT EXISTS bought_items (
+                                                  shopping_list_id BIGINT NOT NULL,
+                                                  item_id BIGINT NOT NULL,
+                                                  FOREIGN KEY (shopping_list_id) REFERENCES shopping_lists(id)
+          );
+  
+      CREATE TABLE IF NOT EXISTS shopping_list_users (
+                                                         shopping_list_id BIGINT NOT NULL,
+                                                         user_id BIGINT NOT NULL,
+                                                         FOREIGN KEY (shopping_list_id) REFERENCES shopping_lists(id)
+          );
+  
+      INSERT INTO shopping_lists (name) VALUES ('Weekly Groceries');
+      INSERT INTO shopping_list_items (shopping_list_id, item_id) VALUES (1, 1001), (1, 1002);
+      INSERT INTO bought_items (shopping_list_id, item_id) VALUES (1, 1002);
+      INSERT INTO shopping_list_users (shopping_list_id, user_id) VALUES (1, 201), (1, 202);
+
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shoppinglist-mysql
+  namespace: nakupovalko
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shoppinglist-mysql
+  template:
+    metadata:
+      labels:
+        app: shoppinglist-mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: mysql
+            - name: MYSQL_DATABASE
+              value: shopping_list_db
+            - name: MYSQL_PASSWORD
+              value: mysql
+
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+            - name: mysql-initdb-config
+              mountPath: /docker-entrypoint-initdb.d
+
+      volumes:
+        - name: mysql-data
+          emptyDir: {}
+        - name: mysql-initdb-config
+          configMap:
+            name: mysql-initdb-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shoppinglist-mysql
+  namespace: nakupovalko
+spec:
+  selector:
+    app: shoppinglist-mysql
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306

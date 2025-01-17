@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shoppinglist
+  namespace: nakupovalko
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: shoppinglist
+  template:
+    metadata:
+      labels:
+        app: shoppinglist
+    spec:
+      containers:
+        - name: shoppinglist
+          image: docker.io/hocevaran/shoppinglist:latest
+          ports:
+            - containerPort: 8090
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://shoppinglist-mysql:3306/shopping_list_db
+            - name: SPRING_DATASOURCE_USERNAME
+              value: root
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: mysql
+      imagePullSecrets:
+        - name: registry-secret
+
+
+#apiVersion: v1
+#kind: ConfigMap
+#metadata:
+#  name: shoppinglist-init
+#  namespace: shoppinglist-namespace
+#data:
+#  init.sql: |
+#    CREATE TABLE IF NOT EXISTS shopping_lists (
+#                                                  id INT AUTO_INCREMENT PRIMARY KEY,
+#                                                  name VARCHAR(255) NOT NULL
+#        );
+#
+#    CREATE TABLE IF NOT EXISTS shopping_list_items (
+#                                                       id INT AUTO_INCREMENT PRIMARY KEY,
+#                                                       shopping_list_id INT NOT NULL,
+#                                                       item_name VARCHAR(255) NOT NULL,
+#        FOREIGN KEY (shopping_list_id) REFERENCES shopping_lists(id) ON DELETE CASCADE
+#        );
+#
+#    INSERT IGNORE INTO shopping_lists (name)
+#    VALUES
+#        ('Groceries'),
+#        ('Household Supplies'),
+#        ('Party Planning');
+#
+#    INSERT IGNORE INTO shopping_list_items (shopping_list_id, item_name)
+#    VALUES
+#        (1, 'Milk'),
+#        (1, 'Eggs'),
+#        (1, 'Bread'),
+#        (2, 'Detergent'),
+#        (2, 'Paper Towels'),
+#        (3, 'Balloons'),
+#        (3, 'Cake');
+#
+#
+#---
+#
+#apiVersion: apps/v1
+#kind: Deployment
+#metadata:
+#  name: shoppinglist-service
+#spec:
+#  replicas: 3
+#  selector:
+#    matchLabels:
+#      app: shoppinglist-service
+#  template:
+#    metadata:
+#      labels:
+#        app: shoppinglist-service
+#    spec:
+#      containers:
+#        - name: shoppinglist-service
+#          image: shoppinglist-service:latest  # Replace with your Docker image
+#          ports:
+#            - containerPort: 8090
+#          env:
+#            - name: SPRING_DATASOURCE_URL
+#              value: jdbc:mysql://mysql:3306/shopping_list_db
+#            - name: SPRING_DATASOURCE_USERNAME
+#              value: root
+#            - name: SPRING_DATASOURCE_PASSWORD
+#              value: mysql
+##            - name: MANAGEMENT.ENDPOINTS.WEB.EXPOSURE.INCLUDE
+##              value: prometheus

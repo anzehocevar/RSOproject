@@ -1,0 +1,16 @@
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - /logs/*.log
+    fields:
+      app: shopping-list-service
+    fields_under_root: true
+
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
+  username: "elastic"
+  password: "G_i5xteMSWusBR0uGYZ_"
+
+setup.kibana:
+  host: "http://kibana:5601"
