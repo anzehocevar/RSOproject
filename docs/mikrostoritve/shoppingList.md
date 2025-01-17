@@ -26,10 +26,13 @@ The ShoppingList service manages shopping lists and integrates with the followin
     cd shoppinglist-service
     ```
 
-2. **Run the Application**
-   Use Docker Compose to set up and run the application along with its dependencies:
-   ```bash
-   docker-compose up --build
+
+2. **Configure the Database**
+   Update the database configuration in `application.properties` or `application.yml`:
+   ```properties
+   spring.datasource.url=jdbc:mysql://localhost:3306/shoppping_list_db
+   spring.datasource.username=root
+   spring.datasource.password=mysql
    ```
 
 3. **Build and Run the Application**
