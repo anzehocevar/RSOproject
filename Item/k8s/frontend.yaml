@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-items
+  namespace: nakupovalko
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-items
+  template:
+    metadata:
+      labels:
+        app: frontend-items
+    spec:
+      containers:
+        - name: frontend
+          image: docker.io/hocevaran/fe-items:latest
+          ports:
+            - containerPort: 80
+      imagePullSecrets:
+        - name: registry-secret
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-items
+  namespace: nakupovalko
+spec:
+  selector:
+    app: frontend-items
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP

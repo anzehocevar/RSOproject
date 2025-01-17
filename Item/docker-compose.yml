@@ -1,0 +1,120 @@
+#version: '3.8'
+services:
+  item-service:
+    build:
+      context: .
+    ports:
+      - "8089:8089"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/itemdb
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: mysql
+      MANAGEMENT.ENDPOINTS.WEB.EXPOSURE.INCLUDE: prometheus
+      MANAGEMENT.METRICS.EXPORT.PROMETHEUS.ENABLED: true
+      SPRINGDOC.API-DOCS.PATH: /v3/api-docs
+#    depends_on:
+#      - logstash
+#      - prometheus
+    networks:
+      - app
+
+  mysql:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: itemdb
+    ports:
+      - "3307:3306"
+    networks:
+      - app
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - app
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - app
+    depends_on:
+      - prometheus
+
+#  elasticsearch:
+#    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.0
+#    container_name: item-elasticsearch
+#    environment:
+#      - discovery.type=single-node
+#      - ES_JAVA_OPTS=-Xms1g -Xmx1g # Adjust memory allocation
+#    ports:
+#      - "9200:9200" # Elasticsearch API
+#      - "9300:9300" # Cluster communication
+#    volumes:
+#      - elastic-data:/usr/share/elasticsearch/data
+#      - elastic-logs:/usr/share/elasticsearch/logs
+#    networks:
+#      - items
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://elasticsearch:9200" ]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 5
+#
+#  logstash:
+#    image: docker.elastic.co/logstash/logstash:8.10.0
+#    environment:
+#      - LS_JAVA_OPTS=-Duser.timezone=UTC
+#    ports:
+#      - "5044:5044"
+#    volumes:
+#      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+#    networks:
+#      - items
+#    depends_on:
+#      elasticsearch:
+#        condition: service_healthy
+#
+#  kibana:
+#    image: docker.elastic.co/kibana/kibana:8.9.0
+#    container_name: item-kibana
+##    environment:
+##      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+#    ports:
+#      - "5601:5601"
+#    depends_on:
+#      - elasticsearch
+#    networks:
+#      - items
+
+#  app:
+#    build: .
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=prod
+#    depends_on:
+#      - logstash
+#    networks:
+#      - elk
+
+#networks:
+#  elk:
+
+#volumes:
+#  mysql_data:
+#  elastic-data:
+#  elastic-logs:
+#
+#networks:
+#  items:
+#    driver: bridge
+#  monitoring:
+#    driver: bridge
+
+networks:
+  app:

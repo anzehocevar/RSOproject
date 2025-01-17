@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: item-service
+  namespace: nakupovalko
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: item-service
+  template:
+    metadata:
+      labels:
+        app: item-service
+    spec:
+      containers:
+        - name: item-service
+          image: docker.io/hocevaran/item-service:latest
+          ports:
+            - containerPort: 8089
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://item-mysql:3306/itemdb
+            - name: SPRING_DATASOURCE_USERNAME
+              value: root
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: mysql
+#            - name: MANAGEMENT.ENDPOINTS.WEB.EXPOSURE.INCLUDE
+#              value: prometheus
+      imagePullSecrets:
+        - name: registry-secret
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: item-service
+  namespace: nakupovalko
+spec:
+  selector:
+    app: item-service
+  ports:
+    - protocol: TCP
+      port: 8089
+      targetPort: 8089
+  type: ClusterIP
