@@ -8,6 +8,15 @@ The Items service is a microservice responsible for managing operations related 
 
 ---
 
+### Supported Functionalities
+- **Create Items:** Add new items to the inventory.
+- **Read Items:** Retrieve details of existing items.
+- **Update Items:** Modify item information.
+- **Delete Items:** Remove items from the inventory.
+- **Search Items:** Query items based on various filters and criteria.
+
+---
+
 ### Running Locally
 
 #### Pre-requisites
@@ -20,7 +29,7 @@ The Items service is a microservice responsible for managing operations related 
 
 1. **Clone the Repository**
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/anzehocevar/RSOproject.git
     cd items-service
     ```
 
