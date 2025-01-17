@@ -5,8 +5,12 @@
       <ul>
         <li><router-link to="/">Home</router-link></li>
         <li><router-link to="/user-shopping-lists">My Shopping Lists</router-link></li>
-        <li><a href="/api/items">Items</a></li> <!-- Direct external link -->
+        <li><a href="/api/items">Items</a></li>
       </ul>
+      <div class="weather">
+        <span v-if="weather">{{ weather }}</span>
+        <span v-else>Loading weather...</span>
+      </div>
     </nav>
     <!-- Main Content -->
     <router-view />
@@ -14,14 +18,32 @@
 </template>
 
 <script>
+
+import axios from "axios";
+
 export default {
-  name: 'App',
+  name:"App",
+  data() {
+    return {
+      weather: null, // To store weather information
+    };
+  },
+  mounted() {
+    this.fetchWeather();
+  },
   methods: {
-    redirectToItems() {
-      window.location.href = '/api/items';
+    async fetchWeather() {
+      try {
+        const response = await axios.get("https://wttr.in/?format=%C+%t"); // wttr.in URL with format query
+        this.weather = response.data.trim(); // Clean up whitespace
+      } catch (error) {
+        console.error("Failed to fetch weather:", error);
+        this.weather = "Unable to fetch weather.";
+      }
     },
   },
 };
+
 </script>
 <style>
 /* Optional global styles */

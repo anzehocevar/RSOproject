@@ -6,6 +6,9 @@ import org.springframework.web.client.RestTemplate;
 import skupina06.model.ShoppingList;
 import skupina06.repository.ShoppingListRepository;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
+
 import java.util.stream.Collectors;
 import java.util.List;
 import java.util.ArrayList;
@@ -73,17 +76,47 @@ public class ShoppingListService {
         shoppingListRepository.deleteById(id);
     }
 
-    // Add an item to a shopping list
+
+    @Retry(name = "itemServiceRetry", fallbackMethod = "addItemFallback")
+    @CircuitBreaker(name = "itemServiceCircuitBreaker", fallbackMethod = "addItemFallback")
     public ShoppingList addItemToShoppingList(Long shoppingListId, Long itemId) {
         ShoppingList shoppingList = shoppingListRepository.findById(shoppingListId)
                 .orElseThrow(() -> new IllegalArgumentException("Shopping List not found"));
 
-        // Optional: Validate item exists in the Item service
-//        validateItemExists(itemId);
+        // Validate item exists in the item service
+//        String url = itemServiceUrl + "/" + itemId;
+//        Boolean itemExists = restTemplate.getForObject(url, Boolean.class);
+//        if (itemExists == null || !itemExists) {
+//            throw new IllegalArgumentException("Item with ID " + itemId + " does not exist");
+//        }
 
+        // Add item to the shopping list
         shoppingList.getItemIds().add(itemId);
         return shoppingListRepository.save(shoppingList);
     }
+
+    // Fallback method
+    private ShoppingList addItemFallback(Long shoppingListId, Long itemId, Throwable throwable) {
+        System.err.println("Fallback triggered for addItemToShoppingList: " + throwable.getMessage());
+        ShoppingList shoppingList = shoppingListRepository.findById(shoppingListId)
+                .orElseThrow(() -> new IllegalArgumentException("Shopping List not found"));
+
+        // Provide a degraded experience or log the issue
+        shoppingList.getItemIds().add(-1L); // Add a placeholder item to indicate failure
+        return shoppingListRepository.save(shoppingList);
+    }
+
+//    // Add an item to a shopping list
+//    public ShoppingList addItemToShoppingList(Long shoppingListId, Long itemId) {
+//        ShoppingList shoppingList = shoppingListRepository.findById(shoppingListId)
+//                .orElseThrow(() -> new IllegalArgumentException("Shopping List not found"));
+//
+//        // Optional: Validate item exists in the Item service
+////        validateItemExists(itemId);
+//
+//        shoppingList.getItemIds().add(itemId);
+//        return shoppingListRepository.save(shoppingList);
+//    }
 
     // Remove an item from a shopping list
     public ShoppingList removeItemFromShoppingList(Long shoppingListId, Long itemId) {
