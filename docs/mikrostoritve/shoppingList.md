@@ -32,6 +32,20 @@ The ShoppingList service manages shopping lists and integrates with the followin
    docker-compose up --build
    ```
 
-3. **Verify the Setup**
+3. **Build and Run the Application**
+   - Build the application:
+     ```bash
+     mvn clean package
+     ```
+   - Run the application:
+     - Locally: Use Docker Compose to set up and run the application along with its dependencies:
+     ```bash
+     docker-compose up --build
+     ```
+
+     - Globaly: build and push docker
+
+
+4. **Verify the Setup**
    - Access the API documentation at: `http://localhost:8090/swagger-ui.html`
    - Monitor Prometheus metrics at: `http://localhost:8090/actuator/prometheus`
